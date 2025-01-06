@@ -4,6 +4,7 @@ import (
 	"backend/domain/dto"
 	interface_pkg "backend/interface"
 	"backend/interface/rest/handler"
+	"backend/middleware"
 	"backend/utils/http_response"
 
 	_ "backend/docs"
@@ -22,7 +23,11 @@ func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonD
 
 	// handlers
 	authHandler := handler.NewAuthHandler(responseWriter, commonDependencies.AuthUcase)
-	_ = authHandler
+	userHandler := handler.NewUserHandler(responseWriter, commonDependencies.UserUcase)
+
+	// middlewares
+	authMiddleware := middleware.AuthMiddleware(responseWriter)
+	adminOnlyMiddleware := middleware.AuthAdminOnlyMiddleware(responseWriter)
 
 	// register routes
 	router.GET("/ping", func(c *gin.Context) {
@@ -31,10 +36,29 @@ func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonD
 			Message: "pong",
 		})
 	})
-	router.POST("/auth/register", authHandler.Register)
-	router.POST("/auth/login", authHandler.Login)
-	router.POST("/auth/check-token", authHandler.CheckToken)
-	router.POST("/auth/refresh-token", authHandler.RefreshToken)
+
+	authRouter := router.Group("/auth")
+	{
+		authRouter.POST("/register", authHandler.Register)
+		authRouter.POST("/login", authHandler.Login)
+		authRouter.POST("/check-token", authHandler.CheckToken)
+		authRouter.POST("/refresh-token", authHandler.RefreshToken)
+	}
+
+	secureRouter := router.Group("/", authMiddleware)
+	{
+		userRouter := secureRouter.Group("/users")
+		{
+			userRouter.GET("/me", userHandler.GetUserMe)
+			userRouter.GET("/:uuid", userHandler.GetUserByUUID)
+			userRouter.PUT("/me", userHandler.UpdateUserMe)
+
+			// admin only
+			userRouter.POST("", adminOnlyMiddleware, userHandler.CreateUser)
+			userRouter.PUT("/:uuid", adminOnlyMiddleware, userHandler.UpdateUser)
+			userRouter.DELETE("/:uuid", adminOnlyMiddleware, userHandler.DeleteUser)
+		}
+	}
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

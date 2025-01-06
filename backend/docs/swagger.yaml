@@ -26,6 +26,70 @@ definitions:
       uuid:
         type: string
     type: object
+  dto.CreateUserReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        enum:
+        - admin
+        - user
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - role
+    - username
+    type: object
+  dto.CreateUserRespData:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
+  dto.DeleteUserRespData:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
+  dto.GetUserByUUIDResp:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
   dto.LoginReq:
     properties:
       password:
@@ -75,6 +139,36 @@ definitions:
       access_token:
         type: string
       refresh_token:
+        type: string
+    type: object
+  dto.UpdateUserReq:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        allOf:
+        - $ref: '#/definitions/enum.UserRole'
+        enum:
+        - admin
+        - user
+      username:
+        type: string
+    type: object
+  dto.UpdateUserRespData:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      role:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
         type: string
     type: object
   enum.UserRole:
@@ -175,6 +269,143 @@ paths:
       summary: register new user
       tags:
       - Auth
+  /users:
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CreateUserRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create new user (admin only)
+      tags:
+      - User
+  /users/{uuid}:
+    delete:
+      parameters:
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.DeleteUserRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: delete user (admin only)
+      tags:
+      - User
+    get:
+      parameters:
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetUserByUUIDResp'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get user by uuid
+      tags:
+      - User
+    put:
+      parameters:
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UpdateUserRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update user (admin only)
+      tags:
+      - User
+  /users/me:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetUserByUUIDResp'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get user (me)
+      tags:
+      - User
+    put:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateUserReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UpdateUserRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update user (me)
+      tags:
+      - User
 securityDefinitions:
   BearerAuth:
     description: JWT Authorization header using the Bearer scheme (add 'Bearer ' prefix).
