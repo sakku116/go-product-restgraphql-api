@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  react_go_product_mongodb:
+    image: mongo:8.0
+    container_name: react_go_product_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-root}
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    # healthcheck:
+    #   test: ["CMD", "mongo", "--eval", "db.runCommand('ping').ok"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
+    #   start_period: 30s
+    networks:
+      - my_network
+
+  # backend
+  react_go_product_backend:
+    build:
+      context: ./backend
+    container_name: react_go_product_backend
+    ports:
+      - "8001:8001"
+    networks:
+      - my_network
+    env_file:
+      - ./backend/.env
+    # depends_on:
+    #   react_go_product_mongodb:
+    #     condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  my_network:
+    driver: bridge
