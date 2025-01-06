@@ -1,0 +1,35 @@
+type BaseUser {
+  uuid: String!
+  username: String!
+  role: String!
+}
+
+input CreateUserInput {
+  username: String!
+  role: String!
+  password: String!
+}
+
+input UpdateUserInput {
+  username: String
+  role: String
+  password: String
+}
+
+type UserPage {
+  users: [BaseUser!]!
+  total_count: Int!
+  page: Int!
+  page_size: Int!
+}
+
+type Query {
+  getUserByID(id: ID!): BaseUser
+  getUsers(page: Int!, page_size: Int!): UserPage
+}
+
+type Mutation {
+  createUser(input: CreateUserInput!): BaseUser
+  updateUser(id: ID!, input: UpdateUserInput!): BaseUser
+  deleteUser(id: ID!): Boolean
+}

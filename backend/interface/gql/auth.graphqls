@@ -1,0 +1,48 @@
+input RegisterInput {
+  Username: String!
+  Password: String!
+}
+
+type RegisterResult {
+  AccessToken: String!
+  RefreshToken: String!
+}
+
+input LoginInput {
+  Username: String!
+  Password: String!
+}
+
+type LoginResult {
+  AccessToken: String!
+  RefreshToken: String!
+}
+
+input CheckTokenInput {
+  AccessToken: String!
+}
+
+type CheckTokenResult {
+  UUID: String!
+  Username: String!
+  Role: String!
+}
+
+input RefreshTokenInput {
+  RefreshToken: String!
+}
+
+type RefreshTokenResult {
+  AccessToken: String!
+  RefreshToken: String!
+}
+
+type Mutation {
+  register(input: RegisterInput!): RegisterResult!
+  login(input: LoginInput!): LoginResult!
+  refreshToken(input: RefreshTokenInput!): RefreshTokenResult!
+}
+
+type Query {
+  checkToken(input: CheckTokenInput!): CheckTokenResult!
+}

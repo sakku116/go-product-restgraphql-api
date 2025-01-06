@@ -1,0 +1,12 @@
+schema:
+  - ../auth.graphqls
+exec:
+  filename: generated.go
+  package: auth_gql
+model:
+  filename: models_gen.go
+  package: auth_gql
+resolver:
+  layout: follow-schema
+  dir: .
+  package: auth_gql
