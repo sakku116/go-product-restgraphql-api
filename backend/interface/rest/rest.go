@@ -17,7 +17,7 @@ import (
 
 var logger = logging.MustGetLogger("rest")
 
-func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonDependency) {
+func SetupRest(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonDependency) {
 	router := ginEngine
 	responseWriter := http_response.NewHttpResponseWriter()
 

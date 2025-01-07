@@ -3,23 +3,24 @@
 package auth_gql
 
 type CheckTokenInput struct {
-	AccessToken string `json:"AccessToken"`
+	AccessToken string `json:"accessToken"`
 }
 
 type CheckTokenResult struct {
-	UUID     string `json:"UUID"`
-	Username string `json:"Username"`
-	Role     string `json:"Role"`
+	UUID     string `json:"uuid"`
+	Username string `json:"username"`
+	Role     string `json:"role"`
+	Email    string `json:"email"`
 }
 
 type LoginInput struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 type LoginResult struct {
-	AccessToken  string `json:"AccessToken"`
-	RefreshToken string `json:"RefreshToken"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }
 
 type Mutation struct {
@@ -28,21 +29,22 @@ type Mutation struct {
 type Query struct {
 }
 
-type RefreshTokenInput struct {
-	RefreshToken string `json:"RefreshToken"`
-}
-
-type RefreshTokenResult struct {
-	AccessToken  string `json:"AccessToken"`
-	RefreshToken string `json:"RefreshToken"`
-}
-
 type RegisterInput struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Email    string `json:"email"`
 }
 
 type RegisterResult struct {
-	AccessToken  string `json:"AccessToken"`
-	RefreshToken string `json:"RefreshToken"`
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RefreshTokenInput struct {
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RefreshTokenResult struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
 }

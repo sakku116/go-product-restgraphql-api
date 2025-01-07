@@ -46,6 +46,7 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	CheckTokenResult struct {
+		Email    func(childComplexity int) int
 		Role     func(childComplexity int) int
 		UUID     func(childComplexity int) int
 		Username func(childComplexity int) int
@@ -66,12 +67,12 @@ type ComplexityRoot struct {
 		CheckToken func(childComplexity int, input CheckTokenInput) int
 	}
 
-	RefreshTokenResult struct {
+	RegisterResult struct {
 		AccessToken  func(childComplexity int) int
 		RefreshToken func(childComplexity int) int
 	}
 
-	RegisterResult struct {
+	RefreshTokenResult struct {
 		AccessToken  func(childComplexity int) int
 		RefreshToken func(childComplexity int) int
 	}
@@ -105,35 +106,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "CheckTokenResult.Role":
+	case "CheckTokenResult.email":
+		if e.complexity.CheckTokenResult.Email == nil {
+			break
+		}
+
+		return e.complexity.CheckTokenResult.Email(childComplexity), true
+
+	case "CheckTokenResult.role":
 		if e.complexity.CheckTokenResult.Role == nil {
 			break
 		}
 
 		return e.complexity.CheckTokenResult.Role(childComplexity), true
 
-	case "CheckTokenResult.UUID":
+	case "CheckTokenResult.uuid":
 		if e.complexity.CheckTokenResult.UUID == nil {
 			break
 		}
 
 		return e.complexity.CheckTokenResult.UUID(childComplexity), true
 
-	case "CheckTokenResult.Username":
+	case "CheckTokenResult.username":
 		if e.complexity.CheckTokenResult.Username == nil {
 			break
 		}
 
 		return e.complexity.CheckTokenResult.Username(childComplexity), true
 
-	case "LoginResult.AccessToken":
+	case "LoginResult.accessToken":
 		if e.complexity.LoginResult.AccessToken == nil {
 			break
 		}
 
 		return e.complexity.LoginResult.AccessToken(childComplexity), true
 
-	case "LoginResult.RefreshToken":
+	case "LoginResult.refreshToken":
 		if e.complexity.LoginResult.RefreshToken == nil {
 			break
 		}
@@ -188,33 +196,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.CheckToken(childComplexity, args["input"].(CheckTokenInput)), true
 
-	case "RefreshTokenResult.AccessToken":
-		if e.complexity.RefreshTokenResult.AccessToken == nil {
-			break
-		}
-
-		return e.complexity.RefreshTokenResult.AccessToken(childComplexity), true
-
-	case "RefreshTokenResult.RefreshToken":
-		if e.complexity.RefreshTokenResult.RefreshToken == nil {
-			break
-		}
-
-		return e.complexity.RefreshTokenResult.RefreshToken(childComplexity), true
-
-	case "RegisterResult.AccessToken":
+	case "RegisterResult.accessToken":
 		if e.complexity.RegisterResult.AccessToken == nil {
 			break
 		}
 
 		return e.complexity.RegisterResult.AccessToken(childComplexity), true
 
-	case "RegisterResult.RefreshToken":
+	case "RegisterResult.refreshToken":
 		if e.complexity.RegisterResult.RefreshToken == nil {
 			break
 		}
 
 		return e.complexity.RegisterResult.RefreshToken(childComplexity), true
+
+	case "refreshTokenResult.accessToken":
+		if e.complexity.RefreshTokenResult.AccessToken == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenResult.AccessToken(childComplexity), true
+
+	case "refreshTokenResult.refreshToken":
+		if e.complexity.RefreshTokenResult.RefreshToken == nil {
+			break
+		}
+
+		return e.complexity.RefreshTokenResult.RefreshToken(childComplexity), true
 
 	}
 	return 0, false
@@ -226,8 +234,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCheckTokenInput,
 		ec.unmarshalInputLoginInput,
-		ec.unmarshalInputRefreshTokenInput,
 		ec.unmarshalInputRegisterInput,
+		ec.unmarshalInputrefreshTokenInput,
 	)
 	first := true
 
@@ -326,48 +334,50 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../auth.graphqls", Input: `input RegisterInput {
-  Username: String!
-  Password: String!
+  username: String!
+  password: String!
+  email: String!
 }
 
 type RegisterResult {
-  AccessToken: String!
-  RefreshToken: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
 input LoginInput {
-  Username: String!
-  Password: String!
+  username: String!
+  password: String!
 }
 
 type LoginResult {
-  AccessToken: String!
-  RefreshToken: String!
+  accessToken: String!
+  refreshToken: String!
 }
 
 input CheckTokenInput {
-  AccessToken: String!
+  accessToken: String!
 }
 
 type CheckTokenResult {
-  UUID: String!
-  Username: String!
-  Role: String!
+  uuid: ID!
+  username: String!
+  role: String!
+  email: String!
 }
 
-input RefreshTokenInput {
-  RefreshToken: String!
+input refreshTokenInput {
+  refreshToken: String!
 }
 
-type RefreshTokenResult {
-  AccessToken: String!
-  RefreshToken: String!
+type refreshTokenResult {
+  accessToken: String!
+  refreshToken: String!
 }
 
 type Mutation {
   register(input: RegisterInput!): RegisterResult!
   login(input: LoginInput!): LoginResult!
-  refreshToken(input: RefreshTokenInput!): RefreshTokenResult!
+  refreshToken(input: refreshTokenInput!): refreshTokenResult!
 }
 
 type Query {
@@ -429,7 +439,7 @@ func (ec *executionContext) field_Mutation_refreshToken_argsInput(
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNRefreshTokenInput2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenInput(ctx, tmp)
+		return ec.unmarshalNrefreshTokenInput2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenInput(ctx, tmp)
 	}
 
 	var zeroVal RefreshTokenInput
@@ -584,8 +594,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _CheckTokenResult_UUID(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CheckTokenResult_UUID(ctx, field)
+func (ec *executionContext) _CheckTokenResult_uuid(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CheckTokenResult_uuid(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -612,24 +622,24 @@ func (ec *executionContext) _CheckTokenResult_UUID(ctx context.Context, field gr
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_CheckTokenResult_UUID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CheckTokenResult_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CheckTokenResult",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _CheckTokenResult_Username(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CheckTokenResult_Username(ctx, field)
+func (ec *executionContext) _CheckTokenResult_username(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CheckTokenResult_username(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -659,7 +669,7 @@ func (ec *executionContext) _CheckTokenResult_Username(ctx context.Context, fiel
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_CheckTokenResult_Username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CheckTokenResult_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CheckTokenResult",
 		Field:      field,
@@ -672,8 +682,8 @@ func (ec *executionContext) fieldContext_CheckTokenResult_Username(_ context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _CheckTokenResult_Role(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_CheckTokenResult_Role(ctx, field)
+func (ec *executionContext) _CheckTokenResult_role(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CheckTokenResult_role(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -703,7 +713,7 @@ func (ec *executionContext) _CheckTokenResult_Role(ctx context.Context, field gr
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_CheckTokenResult_Role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CheckTokenResult_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CheckTokenResult",
 		Field:      field,
@@ -716,8 +726,52 @@ func (ec *executionContext) fieldContext_CheckTokenResult_Role(_ context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _LoginResult_AccessToken(ctx context.Context, field graphql.CollectedField, obj *LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_AccessToken(ctx, field)
+func (ec *executionContext) _CheckTokenResult_email(ctx context.Context, field graphql.CollectedField, obj *CheckTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CheckTokenResult_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CheckTokenResult_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CheckTokenResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _LoginResult_accessToken(ctx context.Context, field graphql.CollectedField, obj *LoginResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LoginResult_accessToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -747,7 +801,7 @@ func (ec *executionContext) _LoginResult_AccessToken(ctx context.Context, field 
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_LoginResult_AccessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_LoginResult_accessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "LoginResult",
 		Field:      field,
@@ -760,8 +814,8 @@ func (ec *executionContext) fieldContext_LoginResult_AccessToken(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _LoginResult_RefreshToken(ctx context.Context, field graphql.CollectedField, obj *LoginResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_LoginResult_RefreshToken(ctx, field)
+func (ec *executionContext) _LoginResult_refreshToken(ctx context.Context, field graphql.CollectedField, obj *LoginResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_LoginResult_refreshToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -791,7 +845,7 @@ func (ec *executionContext) _LoginResult_RefreshToken(ctx context.Context, field
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_LoginResult_RefreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_LoginResult_refreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "LoginResult",
 		Field:      field,
@@ -843,10 +897,10 @@ func (ec *executionContext) fieldContext_Mutation_register(ctx context.Context, 
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "AccessToken":
-				return ec.fieldContext_RegisterResult_AccessToken(ctx, field)
-			case "RefreshToken":
-				return ec.fieldContext_RegisterResult_RefreshToken(ctx, field)
+			case "accessToken":
+				return ec.fieldContext_RegisterResult_accessToken(ctx, field)
+			case "refreshToken":
+				return ec.fieldContext_RegisterResult_refreshToken(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type RegisterResult", field.Name)
 		},
@@ -904,10 +958,10 @@ func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, fie
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "AccessToken":
-				return ec.fieldContext_LoginResult_AccessToken(ctx, field)
-			case "RefreshToken":
-				return ec.fieldContext_LoginResult_RefreshToken(ctx, field)
+			case "accessToken":
+				return ec.fieldContext_LoginResult_accessToken(ctx, field)
+			case "refreshToken":
+				return ec.fieldContext_LoginResult_refreshToken(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type LoginResult", field.Name)
 		},
@@ -954,7 +1008,7 @@ func (ec *executionContext) _Mutation_refreshToken(ctx context.Context, field gr
 	}
 	res := resTmp.(*RefreshTokenResult)
 	fc.Result = res
-	return ec.marshalNRefreshTokenResult2ᚖbackendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx, field.Selections, res)
+	return ec.marshalNrefreshTokenResult2ᚖbackendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -965,12 +1019,12 @@ func (ec *executionContext) fieldContext_Mutation_refreshToken(ctx context.Conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "AccessToken":
-				return ec.fieldContext_RefreshTokenResult_AccessToken(ctx, field)
-			case "RefreshToken":
-				return ec.fieldContext_RefreshTokenResult_RefreshToken(ctx, field)
+			case "accessToken":
+				return ec.fieldContext_refreshTokenResult_accessToken(ctx, field)
+			case "refreshToken":
+				return ec.fieldContext_refreshTokenResult_refreshToken(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type RefreshTokenResult", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type refreshTokenResult", field.Name)
 		},
 	}
 	defer func() {
@@ -1026,12 +1080,14 @@ func (ec *executionContext) fieldContext_Query_checkToken(ctx context.Context, f
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "UUID":
-				return ec.fieldContext_CheckTokenResult_UUID(ctx, field)
-			case "Username":
-				return ec.fieldContext_CheckTokenResult_Username(ctx, field)
-			case "Role":
-				return ec.fieldContext_CheckTokenResult_Role(ctx, field)
+			case "uuid":
+				return ec.fieldContext_CheckTokenResult_uuid(ctx, field)
+			case "username":
+				return ec.fieldContext_CheckTokenResult_username(ctx, field)
+			case "role":
+				return ec.fieldContext_CheckTokenResult_role(ctx, field)
+			case "email":
+				return ec.fieldContext_CheckTokenResult_email(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CheckTokenResult", field.Name)
 		},
@@ -1179,8 +1235,8 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _RefreshTokenResult_AccessToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RefreshTokenResult_AccessToken(ctx, field)
+func (ec *executionContext) _RegisterResult_accessToken(ctx context.Context, field graphql.CollectedField, obj *RegisterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RegisterResult_accessToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1210,95 +1266,7 @@ func (ec *executionContext) _RefreshTokenResult_AccessToken(ctx context.Context,
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RefreshTokenResult_AccessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "RefreshTokenResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _RefreshTokenResult_RefreshToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RefreshTokenResult_RefreshToken(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RefreshToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_RefreshTokenResult_RefreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "RefreshTokenResult",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _RegisterResult_AccessToken(ctx context.Context, field graphql.CollectedField, obj *RegisterResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RegisterResult_AccessToken(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccessToken, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_RegisterResult_AccessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterResult_accessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterResult",
 		Field:      field,
@@ -1311,8 +1279,8 @@ func (ec *executionContext) fieldContext_RegisterResult_AccessToken(_ context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _RegisterResult_RefreshToken(ctx context.Context, field graphql.CollectedField, obj *RegisterResult) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_RegisterResult_RefreshToken(ctx, field)
+func (ec *executionContext) _RegisterResult_refreshToken(ctx context.Context, field graphql.CollectedField, obj *RegisterResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_RegisterResult_refreshToken(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1342,7 +1310,7 @@ func (ec *executionContext) _RegisterResult_RefreshToken(ctx context.Context, fi
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_RegisterResult_RefreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_RegisterResult_refreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "RegisterResult",
 		Field:      field,
@@ -3124,6 +3092,94 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _refreshTokenResult_accessToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_refreshTokenResult_accessToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccessToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_refreshTokenResult_accessToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "refreshTokenResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _refreshTokenResult_refreshToken(ctx context.Context, field graphql.CollectedField, obj *RefreshTokenResult) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_refreshTokenResult_refreshToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RefreshToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_refreshTokenResult_refreshToken(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "refreshTokenResult",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 // endregion **************************** field.gotpl *****************************
 
 // region    **************************** input.gotpl *****************************
@@ -3135,15 +3191,15 @@ func (ec *executionContext) unmarshalInputCheckTokenInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"AccessToken"}
+	fieldsInOrder := [...]string{"accessToken"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "AccessToken":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("AccessToken"))
+		case "accessToken":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accessToken"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
@@ -3162,54 +3218,27 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj an
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Username", "Password"}
+	fieldsInOrder := [...]string{"username", "password"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "Username":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Username"))
+		case "username":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Username = data
-		case "Password":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Password"))
+		case "password":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Password = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputRefreshTokenInput(ctx context.Context, obj any) (RefreshTokenInput, error) {
-	var it RefreshTokenInput
-	asMap := map[string]any{}
-	for k, v := range obj.(map[string]any) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"RefreshToken"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "RefreshToken":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("RefreshToken"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.RefreshToken = data
 		}
 	}
 
@@ -3223,27 +3252,61 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"Username", "Password"}
+	fieldsInOrder := [...]string{"username", "password", "email"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "Username":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Username"))
+		case "username":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("username"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Username = data
-		case "Password":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Password"))
+		case "password":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Password = data
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Email = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputrefreshTokenInput(ctx context.Context, obj any) (RefreshTokenInput, error) {
+	var it RefreshTokenInput
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"refreshToken"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "refreshToken":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("refreshToken"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RefreshToken = data
 		}
 	}
 
@@ -3269,18 +3332,23 @@ func (ec *executionContext) _CheckTokenResult(ctx context.Context, sel ast.Selec
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("CheckTokenResult")
-		case "UUID":
-			out.Values[i] = ec._CheckTokenResult_UUID(ctx, field, obj)
+		case "uuid":
+			out.Values[i] = ec._CheckTokenResult_uuid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "Username":
-			out.Values[i] = ec._CheckTokenResult_Username(ctx, field, obj)
+		case "username":
+			out.Values[i] = ec._CheckTokenResult_username(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "Role":
-			out.Values[i] = ec._CheckTokenResult_Role(ctx, field, obj)
+		case "role":
+			out.Values[i] = ec._CheckTokenResult_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._CheckTokenResult_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3318,13 +3386,13 @@ func (ec *executionContext) _LoginResult(ctx context.Context, sel ast.SelectionS
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("LoginResult")
-		case "AccessToken":
-			out.Values[i] = ec._LoginResult_AccessToken(ctx, field, obj)
+		case "accessToken":
+			out.Values[i] = ec._LoginResult_accessToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "RefreshToken":
-			out.Values[i] = ec._LoginResult_RefreshToken(ctx, field, obj)
+		case "refreshToken":
+			out.Values[i] = ec._LoginResult_refreshToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3486,50 +3554,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var refreshTokenResultImplementors = []string{"RefreshTokenResult"}
-
-func (ec *executionContext) _RefreshTokenResult(ctx context.Context, sel ast.SelectionSet, obj *RefreshTokenResult) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenResultImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("RefreshTokenResult")
-		case "AccessToken":
-			out.Values[i] = ec._RefreshTokenResult_AccessToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "RefreshToken":
-			out.Values[i] = ec._RefreshTokenResult_RefreshToken(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var registerResultImplementors = []string{"RegisterResult"}
 
 func (ec *executionContext) _RegisterResult(ctx context.Context, sel ast.SelectionSet, obj *RegisterResult) graphql.Marshaler {
@@ -3541,13 +3565,13 @@ func (ec *executionContext) _RegisterResult(ctx context.Context, sel ast.Selecti
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("RegisterResult")
-		case "AccessToken":
-			out.Values[i] = ec._RegisterResult_AccessToken(ctx, field, obj)
+		case "accessToken":
+			out.Values[i] = ec._RegisterResult_accessToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "RefreshToken":
-			out.Values[i] = ec._RegisterResult_RefreshToken(ctx, field, obj)
+		case "refreshToken":
+			out.Values[i] = ec._RegisterResult_refreshToken(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3896,6 +3920,50 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var refreshTokenResultImplementors = []string{"refreshTokenResult"}
+
+func (ec *executionContext) _refreshTokenResult(ctx context.Context, sel ast.SelectionSet, obj *RefreshTokenResult) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, refreshTokenResultImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("refreshTokenResult")
+		case "accessToken":
+			out.Values[i] = ec._refreshTokenResult_accessToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "refreshToken":
+			out.Values[i] = ec._refreshTokenResult_refreshToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 // endregion **************************** object.gotpl ****************************
 
 // region    ***************************** type.gotpl *****************************
@@ -3934,6 +4002,21 @@ func (ec *executionContext) marshalNCheckTokenResult2ᚖbackendᚋinterfaceᚋgq
 	return ec._CheckTokenResult(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
+	res, err := graphql.UnmarshalID(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalID(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNLoginInput2backendᚋinterfaceᚋgqlᚋauthᚐLoginInput(ctx context.Context, v any) (LoginInput, error) {
 	res, err := ec.unmarshalInputLoginInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -3951,25 +4034,6 @@ func (ec *executionContext) marshalNLoginResult2ᚖbackendᚋinterfaceᚋgqlᚋa
 		return graphql.Null
 	}
 	return ec._LoginResult(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNRefreshTokenInput2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenInput(ctx context.Context, v any) (RefreshTokenInput, error) {
-	res, err := ec.unmarshalInputRefreshTokenInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNRefreshTokenResult2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx context.Context, sel ast.SelectionSet, v RefreshTokenResult) graphql.Marshaler {
-	return ec._RefreshTokenResult(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNRefreshTokenResult2ᚖbackendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx context.Context, sel ast.SelectionSet, v *RefreshTokenResult) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._RefreshTokenResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNRegisterInput2backendᚋinterfaceᚋgqlᚋauthᚐRegisterInput(ctx context.Context, v any) (RegisterInput, error) {
@@ -4257,6 +4321,25 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNrefreshTokenInput2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenInput(ctx context.Context, v any) (RefreshTokenInput, error) {
+	res, err := ec.unmarshalInputrefreshTokenInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNrefreshTokenResult2backendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx context.Context, sel ast.SelectionSet, v RefreshTokenResult) graphql.Marshaler {
+	return ec._refreshTokenResult(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNrefreshTokenResult2ᚖbackendᚋinterfaceᚋgqlᚋauthᚐRefreshTokenResult(ctx context.Context, sel ast.SelectionSet, v *RefreshTokenResult) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._refreshTokenResult(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {

@@ -4,6 +4,7 @@ import (
 	"backend/config"
 	"backend/domain/model"
 	interface_pkg "backend/interface"
+	"backend/interface/gql"
 	"backend/interface/rest"
 	"backend/repository"
 	ucase "backend/usecase"
@@ -11,6 +12,10 @@ import (
 	seeder_util "backend/utils/seeder/user"
 	"context"
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -65,13 +70,36 @@ func main() {
 	// seed data
 	seeder_util.SeedUser(userRepo)
 
-	// rest
+	// rest + gql
 	ginEngine := gin.Default()
-	rest.SetupServer(ginEngine, dependencies)
+	gql.SetupGql(ginEngine, dependencies)
+	rest.SetupRest(ginEngine, dependencies)
+
+	// http server
+	server := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", config.Envs.HOST, config.Envs.PORT),
+		Handler: ginEngine,
+	}
+
+	// run server
 	go func() {
 		logger.Debugf("starting server at %s:%d", config.Envs.HOST, config.Envs.PORT)
-		ginEngine.Run(fmt.Sprintf("%s:%d", config.Envs.HOST, config.Envs.PORT))
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			logger.Fatalf("server failed to start: %v", err)
+		}
 	}()
 
-	select {}
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	logger.Info("shutting down server...")
+
+	// gracefull shutdown
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer shutdownCancel()
+	if err := server.Shutdown(shutdownCtx); err != nil {
+		logger.Fatalf("server forced to shutdown: %v", err)
+	}
+
+	logger.Info("server exiting")
 }

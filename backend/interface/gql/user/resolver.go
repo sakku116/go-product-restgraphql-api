@@ -9,3 +9,9 @@ import ucase "backend/usecase"
 type Resolver struct {
 	userUcase ucase.IUserUcase
 }
+
+func NewResolver(userUcase ucase.IUserUcase) *Resolver {
+	return &Resolver{
+		userUcase: userUcase,
+	}
+}
