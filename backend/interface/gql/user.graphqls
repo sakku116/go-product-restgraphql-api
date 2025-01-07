@@ -1,35 +1,87 @@
-type BaseUser {
-  uuid: String!
-  username: String!
-  role: String!
-}
-
-input CreateUserInput {
-  username: String!
-  role: String!
-  password: String!
-}
-
-input UpdateUserInput {
-  username: String
-  role: String
-  password: String
-}
-
-type UserPage {
-  users: [BaseUser!]!
-  total_count: Int!
-  page: Int!
-  page_size: Int!
-}
-
 type Query {
-  getUserByID(id: ID!): BaseUser
-  getUsers(page: Int!, page_size: Int!): UserPage
+  getUserByUUID(uuid: ID!): GetUserByUUIDResp
+  getUserMe: GetUserByUUIDResp
+  getUserList(input: GetUserListReq): GetUserListRespData
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): BaseUser
-  updateUser(id: ID!, input: UpdateUserInput!): BaseUser
-  deleteUser(id: ID!): Boolean
+  createUser(input: CreateUserReq!): CreateUserRespData
+  updateUserMe(input: UpdateUserReq!): UpdateUserRespData
+  updateUser(uuid: ID!, input: UpdateUserReq!): UpdateUserRespData
+  deleteUser(uuid: ID!): DeleteUserRespData
+}
+
+type GetUserByUUIDResp {
+  uuid: ID!
+  createdAt: String!
+  updatedAt: String!
+  username: String!
+  role: String!
+  email: String!
+}
+
+input CreateUserReq {
+  username: String!
+  email: String!
+  password: String!
+  role: String!
+}
+
+type CreateUserRespData {
+  uuid: ID!
+  username: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+  email: String!
+}
+
+input UpdateUserReq {
+  username: String
+  email: String
+  password: String
+  role: String
+}
+
+type UpdateUserRespData {
+  uuid: ID!
+  username: String!
+  email: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type DeleteUserRespData {
+  uuid: ID!
+  username: String!
+  role: String!
+  email: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input GetUserListReq {
+  query: String
+  queryBy: String = "username"
+  page: Int = 1
+  limit: Int = 10
+  sortOrder: Int = -1
+  sortBy: String = "updated_at"
+}
+
+type GetUserListRespData_User {
+  uuid: ID!
+  username: String!
+  email: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type GetUserListRespData {
+  total: String!
+  currentPage: String!
+  totalPage: String!
+  data: [GetUserListRespData_User!]!
 }

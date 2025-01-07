@@ -15,12 +15,15 @@ type UserHandler struct {
 
 type IUserHandler interface {
 	GetUserByUUID(ctx *gin.Context)
+	GetUserMe(ctx *gin.Context)
+	UpdateUserMe(ctx *gin.Context)
 	CreateUser(ctx *gin.Context)
 	UpdateUser(ctx *gin.Context)
 	DeleteUser(ctx *gin.Context)
+	GetUserList(ctx *gin.Context)
 }
 
-func NewUserHandler(respWriter http_response.IHttpResponseWriter, userUcase ucase.IUserUcase) UserHandler {
+func NewUserHandler(respWriter http_response.IHttpResponseWriter, userUcase ucase.IUserUcase) IUserHandler {
 	return UserHandler{
 		respWriter: respWriter,
 		userUcase:  userUcase,
@@ -32,7 +35,7 @@ func NewUserHandler(respWriter http_response.IHttpResponseWriter, userUcase ucas
 // @Success 200 {object} dto.BaseJSONResp{data=dto.GetUserByUUIDResp}
 // @Router /users/me [get]
 // @Security BearerAuth
-func (h *UserHandler) GetUserMe(ctx *gin.Context) {
+func (h UserHandler) GetUserMe(ctx *gin.Context) {
 	currentUser, ok := ctx.MustGet("currentUser").(*dto.CurrentUser)
 	if !ok {
 		h.respWriter.HTTPJson(ctx, 500, "internal server error", "current user not found", nil)
@@ -55,7 +58,7 @@ func (h *UserHandler) GetUserMe(ctx *gin.Context) {
 // @Router /users/{uuid} [get]
 // @param uuid path string true "user uuid"
 // @Security BearerAuth
-func (h *UserHandler) GetUserByUUID(ctx *gin.Context) {
+func (h UserHandler) GetUserByUUID(ctx *gin.Context) {
 	userUUID := ctx.Param("uuid")
 
 	data, err := h.userUcase.GetByUUID(ctx, userUUID)
@@ -73,7 +76,7 @@ func (h *UserHandler) GetUserByUUID(ctx *gin.Context) {
 // @Router /users [post]
 // @param payload  body  dto.CreateUserReq  true "payload"
 // @Security BearerAuth
-func (h *UserHandler) CreateUser(ctx *gin.Context) {
+func (h UserHandler) CreateUser(ctx *gin.Context) {
 	var payload dto.CreateUserReq
 	err := ctx.ShouldBindJSON(&payload)
 	if err != nil {
@@ -96,7 +99,7 @@ func (h *UserHandler) CreateUser(ctx *gin.Context) {
 // @Router /users/me [put]
 // @param payload  body  dto.UpdateUserReq  true "payload"
 // @Security BearerAuth
-func (h *UserHandler) UpdateUserMe(ctx *gin.Context) {
+func (h UserHandler) UpdateUserMe(ctx *gin.Context) {
 	// get current user
 	currentUser, ok := ctx.MustGet("currentUser").(dto.CurrentUser)
 	if !ok {
@@ -128,7 +131,7 @@ func (h *UserHandler) UpdateUserMe(ctx *gin.Context) {
 // @param uuid path string true "user uuid"
 // @param payload  body  dto.UpdateUserReq  true "payload"
 // @Security BearerAuth
-func (h *UserHandler) UpdateUser(ctx *gin.Context) {
+func (h UserHandler) UpdateUser(ctx *gin.Context) {
 	userUUID := ctx.Param("uuid")
 	var payload dto.UpdateUserReq
 	err := ctx.ShouldBindJSON(&payload)
@@ -152,10 +155,33 @@ func (h *UserHandler) UpdateUser(ctx *gin.Context) {
 // @Router /users/{uuid} [delete]
 // @param uuid path string true "user uuid"
 // @Security BearerAuth
-func (h *UserHandler) DeleteUser(ctx *gin.Context) {
+func (h UserHandler) DeleteUser(ctx *gin.Context) {
 	userUUID := ctx.Param("uuid")
 
 	data, err := h.userUcase.DeleteUser(ctx, userUUID)
+	if err != nil {
+		h.respWriter.HTTPCustomErr(ctx, err)
+		return
+	}
+
+	h.respWriter.HTTPJsonOK(ctx, data)
+}
+
+// @Summary get user list
+// @Tags User
+// @Success 200 {object} dto.BaseJSONResp{data=dto.GetUserListRespData}
+// @Router /users [get]
+// @param payload  body  dto.GetUserListReq  true "payload"
+// @Security BearerAuth
+func (h UserHandler) GetUserList(ctx *gin.Context) {
+	var params dto.GetUserListReq
+	err := ctx.ShouldBindQuery(&params)
+	if err != nil {
+		h.respWriter.HTTPJson(ctx, 400, "invalid payload", err.Error(), nil)
+		return
+	}
+
+	data, err := h.userUcase.GetUserList(ctx, params)
 	if err != nil {
 		h.respWriter.HTTPCustomErr(ctx, err)
 		return

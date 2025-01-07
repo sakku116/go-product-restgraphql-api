@@ -24,6 +24,7 @@ func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonD
 	// handlers
 	authHandler := handler.NewAuthHandler(responseWriter, commonDependencies.AuthUcase)
 	userHandler := handler.NewUserHandler(responseWriter, commonDependencies.UserUcase)
+	productHandler := handler.NewProductHandler(responseWriter, commonDependencies.ProductUcase)
 
 	// middlewares
 	authMiddleware := middleware.AuthMiddleware(responseWriter)
@@ -49,6 +50,7 @@ func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonD
 	{
 		userRouter := secureRouter.Group("/users")
 		{
+			userRouter.PUT("", userHandler.GetUserList)
 			userRouter.GET("/me", userHandler.GetUserMe)
 			userRouter.GET("/:uuid", userHandler.GetUserByUUID)
 			userRouter.PUT("/me", userHandler.UpdateUserMe)
@@ -57,6 +59,15 @@ func SetupServer(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonD
 			userRouter.POST("", adminOnlyMiddleware, userHandler.CreateUser)
 			userRouter.PUT("/:uuid", adminOnlyMiddleware, userHandler.UpdateUser)
 			userRouter.DELETE("/:uuid", adminOnlyMiddleware, userHandler.DeleteUser)
+		}
+
+		productRouter := secureRouter.Group("/products")
+		{
+			productRouter.GET("", productHandler.GetProductList)
+			productRouter.GET("/:uuid", productHandler.GetProductByUUID)
+			productRouter.POST("", adminOnlyMiddleware, productHandler.CreateProduct)
+			productRouter.PUT("/:uuid", adminOnlyMiddleware, productHandler.UpdateProduct)
+			productRouter.DELETE("/:uuid", adminOnlyMiddleware, productHandler.DeleteProduct)
 		}
 	}
 

@@ -26,6 +26,36 @@ definitions:
       uuid:
         type: string
     type: object
+  dto.CreateProductReq:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    required:
+    - name
+    - price
+    - stock
+    type: object
+  dto.CreateProductRespData:
+    properties:
+      created_at:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
   dto.CreateUserReq:
     properties:
       email:
@@ -60,6 +90,23 @@ definitions:
       uuid:
         type: string
     type: object
+  dto.DeleteProductRespData:
+    properties:
+      created_at:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
   dto.DeleteUserRespData:
     properties:
       created_at:
@@ -75,6 +122,68 @@ definitions:
       uuid:
         type: string
     type: object
+  dto.GetProductByUUIDRespData:
+    properties:
+      created_at:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
+  dto.GetProductListReq:
+    properties:
+      limit:
+        default: 10
+        type: integer
+      page:
+        default: 1
+        type: integer
+      query:
+        type: string
+      query_by:
+        default: name
+        enum:
+        - name
+        type: string
+      sort_by:
+        default: updated_at
+        enum:
+        - updated_at
+        - created_at
+        - name
+        - price
+        type: string
+      sort_order:
+        default: -1
+        enum:
+        - 1
+        - -1
+        type: integer
+      user_uuid:
+        type: string
+    type: object
+  dto.GetProductListRespData:
+    properties:
+      current_page:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.ProductModel'
+        type: array
+      total:
+        type: integer
+      total_page:
+        type: integer
+    type: object
   dto.GetUserByUUIDResp:
     properties:
       created_at:
@@ -89,6 +198,52 @@ definitions:
         type: string
       uuid:
         type: string
+    type: object
+  dto.GetUserListReq:
+    properties:
+      limit:
+        default: 10
+        type: integer
+      page:
+        default: 1
+        type: integer
+      query:
+        type: string
+      query_by:
+        default: username
+        enum:
+        - username
+        - email
+        - role
+        type: string
+      sort_by:
+        default: updated_at
+        enum:
+        - updated_at
+        - created_at
+        - username
+        - email
+        - role
+        type: string
+      sort_order:
+        default: -1
+        enum:
+        - 1
+        - -1
+        type: integer
+    type: object
+  dto.GetUserListRespData:
+    properties:
+      current_page:
+        type: integer
+      data:
+        items:
+          $ref: '#/definitions/model.UserModel'
+        type: array
+      total:
+        type: integer
+      total_page:
+        type: integer
     type: object
   dto.LoginReq:
     properties:
@@ -141,6 +296,32 @@ definitions:
       refresh_token:
         type: string
     type: object
+  dto.UpdateProductReq:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  dto.UpdateProductRespData:
+    properties:
+      created_at:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
   dto.UpdateUserReq:
     properties:
       email:
@@ -179,6 +360,40 @@ definitions:
     x-enum-varnames:
     - UserRole_User
     - UserRole_Admin
+  model.ProductModel:
+    properties:
+      created_at:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+      updated_at:
+        type: string
+      user_uuid:
+        type: string
+      uuid:
+        type: string
+    type: object
+  model.UserModel:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/enum.UserRole'
+      updated_at:
+        type: string
+      username:
+        type: string
+      uuid:
+        type: string
+    type: object
 info:
   contact: {}
   title: Auth Service RESTful API
@@ -269,7 +484,150 @@ paths:
       summary: register new user
       tags:
       - Auth
+  /products:
+    get:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetProductListReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetProductListRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get product list
+      tags:
+      - Product
+    post:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.CreateProductRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: create new product
+      tags:
+      - Product
+  /products/{uuid}:
+    delete:
+      parameters:
+      - description: product uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.DeleteProductRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: delete product
+      tags:
+      - Product
+    get:
+      parameters:
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetProductByUUIDRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get product by uuid
+      tags:
+      - Product
+    put:
+      parameters:
+      - description: product uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UpdateProductReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.UpdateProductRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: update product
+      tags:
+      - Product
   /users:
+    get:
+      parameters:
+      - description: payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetUserListReq'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/dto.BaseJSONResp'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.GetUserListRespData'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: get user list
+      tags:
+      - User
     post:
       parameters:
       - description: payload

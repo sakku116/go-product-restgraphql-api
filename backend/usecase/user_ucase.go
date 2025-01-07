@@ -33,6 +33,10 @@ type IUserUcase interface {
 		ctx context.Context,
 		userUUID string,
 	) (*dto.DeleteUserRespData, error)
+	GetUserList(
+		ctx context.Context,
+		params dto.GetUserListReq,
+	) (*dto.GetUserListRespData, error)
 }
 
 func NewUserUcase(userRepo repository.IUserRepo) IUserUcase {
@@ -105,24 +109,24 @@ func (ucase *UserUcase) CreateUser(
 		}
 	}
 
-	// create password
-	password, err := bcrypt_util.Hash(payload.Password)
-	if err != nil {
-		logger.Errorf("error hashing password: %v", err)
-		return nil, err
-	}
-
 	// create user
 	user = &model.UserModel{
 		UUID:      uuid.New().String(),
 		Username:  payload.Username,
-		Password:  password,
+		Password:  payload.Password,
 		Role:      "user",
 		UpdatedAt: helper.TimeNowUTC(),
 		CreatedAt: helper.TimeNowUTC(),
 	}
 	err = user.ValidateBefore()
 	if err != nil {
+		return nil, err
+	}
+
+	// create password
+	user.Password, err = bcrypt_util.Hash(payload.Password)
+	if err != nil {
+		logger.Errorf("error hashing password: %v", err)
 		return nil, err
 	}
 
@@ -284,4 +288,28 @@ func (ucase *UserUcase) DeleteUser(
 		UpdatedAt: user.UpdatedAt,
 		Email:     user.Email,
 	}, nil
+}
+
+func (ucase *UserUcase) GetUserList(
+	ctx context.Context,
+	params dto.GetUserListReq,
+) (*dto.GetUserListRespData, error) {
+	users, total, err := ucase.userRepo.GetList(ctx, dto.UserRepo_GetListParams{
+		Query:     params.Query,
+		QueryBy:   params.QueryBy,
+		Page:      params.Page,
+		Limit:     params.Limit,
+		SortBy:    params.SortBy,
+		SortOrder: params.SortOrder,
+		DoCount:   true,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &dto.GetUserListRespData{}
+	resp.Set(*total, *params.Page, *params.Limit)
+	resp.Data = users
+
+	return resp, nil
 }

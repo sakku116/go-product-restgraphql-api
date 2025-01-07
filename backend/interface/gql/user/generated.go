@@ -45,39 +45,82 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
-	BaseUser struct {
-		Role     func(childComplexity int) int
-		UUID     func(childComplexity int) int
-		Username func(childComplexity int) int
+	CreateUserRespData struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Role      func(childComplexity int) int
+		UUID      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Username  func(childComplexity int) int
+	}
+
+	DeleteUserRespData struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Role      func(childComplexity int) int
+		UUID      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Username  func(childComplexity int) int
+	}
+
+	GetUserByUUIDResp struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Role      func(childComplexity int) int
+		UUID      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Username  func(childComplexity int) int
+	}
+
+	GetUserListRespData struct {
+		CurrentPage func(childComplexity int) int
+		Data        func(childComplexity int) int
+		Total       func(childComplexity int) int
+		TotalPage   func(childComplexity int) int
+	}
+
+	GetUserListRespData_User struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Role      func(childComplexity int) int
+		UUID      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Username  func(childComplexity int) int
 	}
 
 	Mutation struct {
-		CreateUser func(childComplexity int, input CreateUserInput) int
-		DeleteUser func(childComplexity int, id string) int
-		UpdateUser func(childComplexity int, id string, input UpdateUserInput) int
+		CreateUser   func(childComplexity int, input CreateUserReq) int
+		DeleteUser   func(childComplexity int, uuid string) int
+		UpdateUser   func(childComplexity int, uuid string, input UpdateUserReq) int
+		UpdateUserMe func(childComplexity int, input UpdateUserReq) int
 	}
 
 	Query struct {
-		GetUserByID func(childComplexity int, id string) int
-		GetUsers    func(childComplexity int, page int, pageSize int) int
+		GetUserByUUID func(childComplexity int, uuid string) int
+		GetUserList   func(childComplexity int, input *GetUserListReq) int
+		GetUserMe     func(childComplexity int) int
 	}
 
-	UserPage struct {
-		Page       func(childComplexity int) int
-		PageSize   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-		Users      func(childComplexity int) int
+	UpdateUserRespData struct {
+		CreatedAt func(childComplexity int) int
+		Email     func(childComplexity int) int
+		Role      func(childComplexity int) int
+		UUID      func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+		Username  func(childComplexity int) int
 	}
 }
 
 type MutationResolver interface {
-	CreateUser(ctx context.Context, input CreateUserInput) (*BaseUser, error)
-	UpdateUser(ctx context.Context, id string, input UpdateUserInput) (*BaseUser, error)
-	DeleteUser(ctx context.Context, id string) (*bool, error)
+	CreateUser(ctx context.Context, input CreateUserReq) (*CreateUserRespData, error)
+	UpdateUserMe(ctx context.Context, input UpdateUserReq) (*UpdateUserRespData, error)
+	UpdateUser(ctx context.Context, uuid string, input UpdateUserReq) (*UpdateUserRespData, error)
+	DeleteUser(ctx context.Context, uuid string) (*DeleteUserRespData, error)
 }
 type QueryResolver interface {
-	GetUserByID(ctx context.Context, id string) (*BaseUser, error)
-	GetUsers(ctx context.Context, page int, pageSize int) (*UserPage, error)
+	GetUserByUUID(ctx context.Context, uuid string) (*GetUserByUUIDResp, error)
+	GetUserMe(ctx context.Context) (*GetUserByUUIDResp, error)
+	GetUserList(ctx context.Context, input *GetUserListReq) (*GetUserListRespData, error)
 }
 
 type executableSchema struct {
@@ -99,26 +142,201 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
-	case "BaseUser.role":
-		if e.complexity.BaseUser.Role == nil {
+	case "CreateUserRespData.createdAt":
+		if e.complexity.CreateUserRespData.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.BaseUser.Role(childComplexity), true
+		return e.complexity.CreateUserRespData.CreatedAt(childComplexity), true
 
-	case "BaseUser.uuid":
-		if e.complexity.BaseUser.UUID == nil {
+	case "CreateUserRespData.email":
+		if e.complexity.CreateUserRespData.Email == nil {
 			break
 		}
 
-		return e.complexity.BaseUser.UUID(childComplexity), true
+		return e.complexity.CreateUserRespData.Email(childComplexity), true
 
-	case "BaseUser.username":
-		if e.complexity.BaseUser.Username == nil {
+	case "CreateUserRespData.role":
+		if e.complexity.CreateUserRespData.Role == nil {
 			break
 		}
 
-		return e.complexity.BaseUser.Username(childComplexity), true
+		return e.complexity.CreateUserRespData.Role(childComplexity), true
+
+	case "CreateUserRespData.uuid":
+		if e.complexity.CreateUserRespData.UUID == nil {
+			break
+		}
+
+		return e.complexity.CreateUserRespData.UUID(childComplexity), true
+
+	case "CreateUserRespData.updatedAt":
+		if e.complexity.CreateUserRespData.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.CreateUserRespData.UpdatedAt(childComplexity), true
+
+	case "CreateUserRespData.username":
+		if e.complexity.CreateUserRespData.Username == nil {
+			break
+		}
+
+		return e.complexity.CreateUserRespData.Username(childComplexity), true
+
+	case "DeleteUserRespData.createdAt":
+		if e.complexity.DeleteUserRespData.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.CreatedAt(childComplexity), true
+
+	case "DeleteUserRespData.email":
+		if e.complexity.DeleteUserRespData.Email == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.Email(childComplexity), true
+
+	case "DeleteUserRespData.role":
+		if e.complexity.DeleteUserRespData.Role == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.Role(childComplexity), true
+
+	case "DeleteUserRespData.uuid":
+		if e.complexity.DeleteUserRespData.UUID == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.UUID(childComplexity), true
+
+	case "DeleteUserRespData.updatedAt":
+		if e.complexity.DeleteUserRespData.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.UpdatedAt(childComplexity), true
+
+	case "DeleteUserRespData.username":
+		if e.complexity.DeleteUserRespData.Username == nil {
+			break
+		}
+
+		return e.complexity.DeleteUserRespData.Username(childComplexity), true
+
+	case "GetUserByUUIDResp.createdAt":
+		if e.complexity.GetUserByUUIDResp.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.CreatedAt(childComplexity), true
+
+	case "GetUserByUUIDResp.email":
+		if e.complexity.GetUserByUUIDResp.Email == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.Email(childComplexity), true
+
+	case "GetUserByUUIDResp.role":
+		if e.complexity.GetUserByUUIDResp.Role == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.Role(childComplexity), true
+
+	case "GetUserByUUIDResp.uuid":
+		if e.complexity.GetUserByUUIDResp.UUID == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.UUID(childComplexity), true
+
+	case "GetUserByUUIDResp.updatedAt":
+		if e.complexity.GetUserByUUIDResp.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.UpdatedAt(childComplexity), true
+
+	case "GetUserByUUIDResp.username":
+		if e.complexity.GetUserByUUIDResp.Username == nil {
+			break
+		}
+
+		return e.complexity.GetUserByUUIDResp.Username(childComplexity), true
+
+	case "GetUserListRespData.currentPage":
+		if e.complexity.GetUserListRespData.CurrentPage == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData.CurrentPage(childComplexity), true
+
+	case "GetUserListRespData.data":
+		if e.complexity.GetUserListRespData.Data == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData.Data(childComplexity), true
+
+	case "GetUserListRespData.total":
+		if e.complexity.GetUserListRespData.Total == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData.Total(childComplexity), true
+
+	case "GetUserListRespData.totalPage":
+		if e.complexity.GetUserListRespData.TotalPage == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData.TotalPage(childComplexity), true
+
+	case "GetUserListRespData_User.createdAt":
+		if e.complexity.GetUserListRespData_User.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.CreatedAt(childComplexity), true
+
+	case "GetUserListRespData_User.email":
+		if e.complexity.GetUserListRespData_User.Email == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.Email(childComplexity), true
+
+	case "GetUserListRespData_User.role":
+		if e.complexity.GetUserListRespData_User.Role == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.Role(childComplexity), true
+
+	case "GetUserListRespData_User.uuid":
+		if e.complexity.GetUserListRespData_User.UUID == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.UUID(childComplexity), true
+
+	case "GetUserListRespData_User.updatedAt":
+		if e.complexity.GetUserListRespData_User.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.UpdatedAt(childComplexity), true
+
+	case "GetUserListRespData_User.username":
+		if e.complexity.GetUserListRespData_User.Username == nil {
+			break
+		}
+
+		return e.complexity.GetUserListRespData_User.Username(childComplexity), true
 
 	case "Mutation.createUser":
 		if e.complexity.Mutation.CreateUser == nil {
@@ -130,7 +348,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(CreateUserInput)), true
+		return e.complexity.Mutation.CreateUser(childComplexity, args["input"].(CreateUserReq)), true
 
 	case "Mutation.deleteUser":
 		if e.complexity.Mutation.DeleteUser == nil {
@@ -142,7 +360,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.DeleteUser(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.DeleteUser(childComplexity, args["uuid"].(string)), true
 
 	case "Mutation.updateUser":
 		if e.complexity.Mutation.UpdateUser == nil {
@@ -154,59 +372,92 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.UpdateUser(childComplexity, args["id"].(string), args["input"].(UpdateUserInput)), true
+		return e.complexity.Mutation.UpdateUser(childComplexity, args["uuid"].(string), args["input"].(UpdateUserReq)), true
 
-	case "Query.getUserByID":
-		if e.complexity.Query.GetUserByID == nil {
+	case "Mutation.updateUserMe":
+		if e.complexity.Mutation.UpdateUserMe == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getUserByID_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_updateUserMe_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetUserByID(childComplexity, args["id"].(string)), true
+		return e.complexity.Mutation.UpdateUserMe(childComplexity, args["input"].(UpdateUserReq)), true
 
-	case "Query.getUsers":
-		if e.complexity.Query.GetUsers == nil {
+	case "Query.getUserByUUID":
+		if e.complexity.Query.GetUserByUUID == nil {
 			break
 		}
 
-		args, err := ec.field_Query_getUsers_args(context.TODO(), rawArgs)
+		args, err := ec.field_Query_getUserByUUID_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Query.GetUsers(childComplexity, args["page"].(int), args["page_size"].(int)), true
+		return e.complexity.Query.GetUserByUUID(childComplexity, args["uuid"].(string)), true
 
-	case "UserPage.page":
-		if e.complexity.UserPage.Page == nil {
+	case "Query.getUserList":
+		if e.complexity.Query.GetUserList == nil {
 			break
 		}
 
-		return e.complexity.UserPage.Page(childComplexity), true
+		args, err := ec.field_Query_getUserList_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
 
-	case "UserPage.page_size":
-		if e.complexity.UserPage.PageSize == nil {
+		return e.complexity.Query.GetUserList(childComplexity, args["input"].(*GetUserListReq)), true
+
+	case "Query.getUserMe":
+		if e.complexity.Query.GetUserMe == nil {
 			break
 		}
 
-		return e.complexity.UserPage.PageSize(childComplexity), true
+		return e.complexity.Query.GetUserMe(childComplexity), true
 
-	case "UserPage.total_count":
-		if e.complexity.UserPage.TotalCount == nil {
+	case "UpdateUserRespData.createdAt":
+		if e.complexity.UpdateUserRespData.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.UserPage.TotalCount(childComplexity), true
+		return e.complexity.UpdateUserRespData.CreatedAt(childComplexity), true
 
-	case "UserPage.users":
-		if e.complexity.UserPage.Users == nil {
+	case "UpdateUserRespData.email":
+		if e.complexity.UpdateUserRespData.Email == nil {
 			break
 		}
 
-		return e.complexity.UserPage.Users(childComplexity), true
+		return e.complexity.UpdateUserRespData.Email(childComplexity), true
+
+	case "UpdateUserRespData.role":
+		if e.complexity.UpdateUserRespData.Role == nil {
+			break
+		}
+
+		return e.complexity.UpdateUserRespData.Role(childComplexity), true
+
+	case "UpdateUserRespData.uuid":
+		if e.complexity.UpdateUserRespData.UUID == nil {
+			break
+		}
+
+		return e.complexity.UpdateUserRespData.UUID(childComplexity), true
+
+	case "UpdateUserRespData.updatedAt":
+		if e.complexity.UpdateUserRespData.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.UpdateUserRespData.UpdatedAt(childComplexity), true
+
+	case "UpdateUserRespData.username":
+		if e.complexity.UpdateUserRespData.Username == nil {
+			break
+		}
+
+		return e.complexity.UpdateUserRespData.Username(childComplexity), true
 
 	}
 	return 0, false
@@ -216,8 +467,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	opCtx := graphql.GetOperationContext(ctx)
 	ec := executionContext{opCtx, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
-		ec.unmarshalInputCreateUserInput,
-		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputCreateUserReq,
+		ec.unmarshalInputGetUserListReq,
+		ec.unmarshalInputUpdateUserReq,
 	)
 	first := true
 
@@ -315,40 +567,92 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../user.graphqls", Input: `type BaseUser {
-  uuid: String!
-  username: String!
-  role: String!
-}
-
-input CreateUserInput {
-  username: String!
-  role: String!
-  password: String!
-}
-
-input UpdateUserInput {
-  username: String
-  role: String
-  password: String
-}
-
-type UserPage {
-  users: [BaseUser!]!
-  total_count: Int!
-  page: Int!
-  page_size: Int!
-}
-
-type Query {
-  getUserByID(id: ID!): BaseUser
-  getUsers(page: Int!, page_size: Int!): UserPage
+	{Name: "../user.graphqls", Input: `type Query {
+  getUserByUUID(uuid: ID!): GetUserByUUIDResp
+  getUserMe: GetUserByUUIDResp
+  getUserList(input: GetUserListReq): GetUserListRespData
 }
 
 type Mutation {
-  createUser(input: CreateUserInput!): BaseUser
-  updateUser(id: ID!, input: UpdateUserInput!): BaseUser
-  deleteUser(id: ID!): Boolean
+  createUser(input: CreateUserReq!): CreateUserRespData
+  updateUserMe(input: UpdateUserReq!): UpdateUserRespData
+  updateUser(uuid: ID!, input: UpdateUserReq!): UpdateUserRespData
+  deleteUser(uuid: ID!): DeleteUserRespData
+}
+
+type GetUserByUUIDResp {
+  uuid: ID!
+  createdAt: String!
+  updatedAt: String!
+  username: String!
+  role: String!
+  email: String!
+}
+
+input CreateUserReq {
+  username: String!
+  email: String!
+  password: String!
+  role: String!
+}
+
+type CreateUserRespData {
+  uuid: ID!
+  username: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+  email: String!
+}
+
+input UpdateUserReq {
+  username: String
+  email: String
+  password: String
+  role: String
+}
+
+type UpdateUserRespData {
+  uuid: ID!
+  username: String!
+  email: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type DeleteUserRespData {
+  uuid: ID!
+  username: String!
+  role: String!
+  email: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+input GetUserListReq {
+  query: String
+  queryBy: String = "username"
+  page: Int = 1
+  limit: Int = 10
+  sortOrder: Int = -1
+  sortBy: String = "updated_at"
+}
+
+type GetUserListRespData_User {
+  uuid: ID!
+  username: String!
+  email: String!
+  role: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type GetUserListRespData {
+  total: String!
+  currentPage: String!
+  totalPage: String!
+  data: [GetUserListRespData_User!]!
 }
 `, BuiltIn: false},
 }
@@ -371,42 +675,42 @@ func (ec *executionContext) field_Mutation_createUser_args(ctx context.Context, 
 func (ec *executionContext) field_Mutation_createUser_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (CreateUserInput, error) {
+) (CreateUserReq, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal CreateUserInput
+		var zeroVal CreateUserReq
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNCreateUserInput2backendᚋinterfaceᚋgqlᚋuserᚐCreateUserInput(ctx, tmp)
+		return ec.unmarshalNCreateUserReq2backendᚋinterfaceᚋgqlᚋuserᚐCreateUserReq(ctx, tmp)
 	}
 
-	var zeroVal CreateUserInput
+	var zeroVal CreateUserReq
 	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_deleteUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_deleteUser_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_deleteUser_argsUUID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["id"] = arg0
+	args["uuid"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_deleteUser_argsID(
+func (ec *executionContext) field_Mutation_deleteUser_argsUUID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (string, error) {
-	if _, ok := rawArgs["id"]; !ok {
+	if _, ok := rawArgs["uuid"]; !ok {
 		var zeroVal string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+	if tmp, ok := rawArgs["uuid"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
 	}
 
@@ -414,14 +718,42 @@ func (ec *executionContext) field_Mutation_deleteUser_argsID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Mutation_updateUserMe_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Mutation_updateUser_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_updateUserMe_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["id"] = arg0
+	args["input"] = arg0
+	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateUserMe_argsInput(
+	ctx context.Context,
+	rawArgs map[string]any,
+) (UpdateUserReq, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal UpdateUserReq
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateUserReq2backendᚋinterfaceᚋgqlᚋuserᚐUpdateUserReq(ctx, tmp)
+	}
+
+	var zeroVal UpdateUserReq
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+	var err error
+	args := map[string]any{}
+	arg0, err := ec.field_Mutation_updateUser_argsUUID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["uuid"] = arg0
 	arg1, err := ec.field_Mutation_updateUser_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
@@ -429,17 +761,17 @@ func (ec *executionContext) field_Mutation_updateUser_args(ctx context.Context, 
 	args["input"] = arg1
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_updateUser_argsID(
+func (ec *executionContext) field_Mutation_updateUser_argsUUID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (string, error) {
-	if _, ok := rawArgs["id"]; !ok {
+	if _, ok := rawArgs["uuid"]; !ok {
 		var zeroVal string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+	if tmp, ok := rawArgs["uuid"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
 	}
 
@@ -450,18 +782,18 @@ func (ec *executionContext) field_Mutation_updateUser_argsID(
 func (ec *executionContext) field_Mutation_updateUser_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (UpdateUserInput, error) {
+) (UpdateUserReq, error) {
 	if _, ok := rawArgs["input"]; !ok {
-		var zeroVal UpdateUserInput
+		var zeroVal UpdateUserReq
 		return zeroVal, nil
 	}
 
 	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 	if tmp, ok := rawArgs["input"]; ok {
-		return ec.unmarshalNUpdateUserInput2backendᚋinterfaceᚋgqlᚋuserᚐUpdateUserInput(ctx, tmp)
+		return ec.unmarshalNUpdateUserReq2backendᚋinterfaceᚋgqlᚋuserᚐUpdateUserReq(ctx, tmp)
 	}
 
-	var zeroVal UpdateUserInput
+	var zeroVal UpdateUserReq
 	return zeroVal, nil
 }
 
@@ -493,27 +825,27 @@ func (ec *executionContext) field_Query___type_argsName(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getUserByID_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Query_getUserByUUID_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_getUserByID_argsID(ctx, rawArgs)
+	arg0, err := ec.field_Query_getUserByUUID_argsUUID(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["id"] = arg0
+	args["uuid"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getUserByID_argsID(
+func (ec *executionContext) field_Query_getUserByUUID_argsUUID(
 	ctx context.Context,
 	rawArgs map[string]any,
 ) (string, error) {
-	if _, ok := rawArgs["id"]; !ok {
+	if _, ok := rawArgs["uuid"]; !ok {
 		var zeroVal string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-	if tmp, ok := rawArgs["id"]; ok {
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("uuid"))
+	if tmp, ok := rawArgs["uuid"]; ok {
 		return ec.unmarshalNID2string(ctx, tmp)
 	}
 
@@ -521,54 +853,31 @@ func (ec *executionContext) field_Query_getUserByID_argsID(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_getUsers_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
+func (ec *executionContext) field_Query_getUserList_args(ctx context.Context, rawArgs map[string]any) (map[string]any, error) {
 	var err error
 	args := map[string]any{}
-	arg0, err := ec.field_Query_getUsers_argsPage(ctx, rawArgs)
+	arg0, err := ec.field_Query_getUserList_argsInput(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["page"] = arg0
-	arg1, err := ec.field_Query_getUsers_argsPageSize(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["page_size"] = arg1
+	args["input"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_getUsers_argsPage(
+func (ec *executionContext) field_Query_getUserList_argsInput(
 	ctx context.Context,
 	rawArgs map[string]any,
-) (int, error) {
-	if _, ok := rawArgs["page"]; !ok {
-		var zeroVal int
+) (*GetUserListReq, error) {
+	if _, ok := rawArgs["input"]; !ok {
+		var zeroVal *GetUserListReq
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
-	if tmp, ok := rawArgs["page"]; ok {
-		return ec.unmarshalNInt2int(ctx, tmp)
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalOGetUserListReq2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListReq(ctx, tmp)
 	}
 
-	var zeroVal int
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_getUsers_argsPageSize(
-	ctx context.Context,
-	rawArgs map[string]any,
-) (int, error) {
-	if _, ok := rawArgs["page_size"]; !ok {
-		var zeroVal int
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("page_size"))
-	if tmp, ok := rawArgs["page_size"]; ok {
-		return ec.unmarshalNInt2int(ctx, tmp)
-	}
-
-	var zeroVal int
+	var zeroVal *GetUserListReq
 	return zeroVal, nil
 }
 
@@ -636,8 +945,8 @@ func (ec *executionContext) field___Type_fields_argsIncludeDeprecated(
 
 // region    **************************** field.gotpl *****************************
 
-func (ec *executionContext) _BaseUser_uuid(ctx context.Context, field graphql.CollectedField, obj *BaseUser) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_BaseUser_uuid(ctx, field)
+func (ec *executionContext) _CreateUserRespData_uuid(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_uuid(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -664,24 +973,24 @@ func (ec *executionContext) _BaseUser_uuid(ctx context.Context, field graphql.Co
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_BaseUser_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CreateUserRespData_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "BaseUser",
+		Object:     "CreateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _BaseUser_username(ctx context.Context, field graphql.CollectedField, obj *BaseUser) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_BaseUser_username(ctx, field)
+func (ec *executionContext) _CreateUserRespData_username(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_username(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -711,9 +1020,9 @@ func (ec *executionContext) _BaseUser_username(ctx context.Context, field graphq
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_BaseUser_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CreateUserRespData_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "BaseUser",
+		Object:     "CreateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -724,8 +1033,8 @@ func (ec *executionContext) fieldContext_BaseUser_username(_ context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _BaseUser_role(ctx context.Context, field graphql.CollectedField, obj *BaseUser) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_BaseUser_role(ctx, field)
+func (ec *executionContext) _CreateUserRespData_role(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_role(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -755,9 +1064,1123 @@ func (ec *executionContext) _BaseUser_role(ctx context.Context, field graphql.Co
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_BaseUser_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_CreateUserRespData_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "BaseUser",
+		Object:     "CreateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateUserRespData_createdAt(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateUserRespData_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateUserRespData_updatedAt(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateUserRespData_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CreateUserRespData_email(ctx context.Context, field graphql.CollectedField, obj *CreateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CreateUserRespData_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CreateUserRespData_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CreateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_uuid(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_uuid(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_username(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_username(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_role(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_email(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_createdAt(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _DeleteUserRespData_updatedAt(ctx context.Context, field graphql.CollectedField, obj *DeleteUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_DeleteUserRespData_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_DeleteUserRespData_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "DeleteUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_uuid(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_uuid(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_createdAt(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_updatedAt(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_username(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_username(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_role(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserByUUIDResp_email(ctx context.Context, field graphql.CollectedField, obj *GetUserByUUIDResp) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserByUUIDResp_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserByUUIDResp_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserByUUIDResp",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_total(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_total(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Total, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_total(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_currentPage(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_currentPage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrentPage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_currentPage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_totalPage(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_totalPage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalPage, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_totalPage(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_data(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Data, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*GetUserListRespDataUser)
+	fc.Result = res
+	return ec.marshalNGetUserListRespData_User2ᚕᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespDataUserᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_data(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "uuid":
+				return ec.fieldContext_GetUserListRespData_User_uuid(ctx, field)
+			case "username":
+				return ec.fieldContext_GetUserListRespData_User_username(ctx, field)
+			case "email":
+				return ec.fieldContext_GetUserListRespData_User_email(ctx, field)
+			case "role":
+				return ec.fieldContext_GetUserListRespData_User_role(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GetUserListRespData_User_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GetUserListRespData_User_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GetUserListRespData_User", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_uuid(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_uuid(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UUID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_username(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_username(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Username, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_email(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_email(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Email, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_role(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_createdAt(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _GetUserListRespData_User_updatedAt(ctx context.Context, field graphql.CollectedField, obj *GetUserListRespDataUser) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_GetUserListRespData_User_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_GetUserListRespData_User_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "GetUserListRespData_User",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -782,7 +2205,7 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(CreateUserInput))
+		return ec.resolvers.Mutation().CreateUser(rctx, fc.Args["input"].(CreateUserReq))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -791,9 +2214,9 @@ func (ec *executionContext) _Mutation_createUser(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*BaseUser)
+	res := resTmp.(*CreateUserRespData)
 	fc.Result = res
-	return ec.marshalOBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx, field.Selections, res)
+	return ec.marshalOCreateUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐCreateUserRespData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -805,13 +2228,19 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "uuid":
-				return ec.fieldContext_BaseUser_uuid(ctx, field)
+				return ec.fieldContext_CreateUserRespData_uuid(ctx, field)
 			case "username":
-				return ec.fieldContext_BaseUser_username(ctx, field)
+				return ec.fieldContext_CreateUserRespData_username(ctx, field)
 			case "role":
-				return ec.fieldContext_BaseUser_role(ctx, field)
+				return ec.fieldContext_CreateUserRespData_role(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_CreateUserRespData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_CreateUserRespData_updatedAt(ctx, field)
+			case "email":
+				return ec.fieldContext_CreateUserRespData_email(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type BaseUser", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type CreateUserRespData", field.Name)
 		},
 	}
 	defer func() {
@@ -822,6 +2251,72 @@ func (ec *executionContext) fieldContext_Mutation_createUser(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createUser_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateUserMe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateUserMe(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().UpdateUserMe(rctx, fc.Args["input"].(UpdateUserReq))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*UpdateUserRespData)
+	fc.Result = res
+	return ec.marshalOUpdateUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐUpdateUserRespData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateUserMe(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "uuid":
+				return ec.fieldContext_UpdateUserRespData_uuid(ctx, field)
+			case "username":
+				return ec.fieldContext_UpdateUserRespData_username(ctx, field)
+			case "email":
+				return ec.fieldContext_UpdateUserRespData_email(ctx, field)
+			case "role":
+				return ec.fieldContext_UpdateUserRespData_role(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UpdateUserRespData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UpdateUserRespData_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type UpdateUserRespData", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateUserMe_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -842,7 +2337,7 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["id"].(string), fc.Args["input"].(UpdateUserInput))
+		return ec.resolvers.Mutation().UpdateUser(rctx, fc.Args["uuid"].(string), fc.Args["input"].(UpdateUserReq))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -851,9 +2346,9 @@ func (ec *executionContext) _Mutation_updateUser(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*BaseUser)
+	res := resTmp.(*UpdateUserRespData)
 	fc.Result = res
-	return ec.marshalOBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx, field.Selections, res)
+	return ec.marshalOUpdateUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐUpdateUserRespData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -865,13 +2360,19 @@ func (ec *executionContext) fieldContext_Mutation_updateUser(ctx context.Context
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "uuid":
-				return ec.fieldContext_BaseUser_uuid(ctx, field)
+				return ec.fieldContext_UpdateUserRespData_uuid(ctx, field)
 			case "username":
-				return ec.fieldContext_BaseUser_username(ctx, field)
+				return ec.fieldContext_UpdateUserRespData_username(ctx, field)
+			case "email":
+				return ec.fieldContext_UpdateUserRespData_email(ctx, field)
 			case "role":
-				return ec.fieldContext_BaseUser_role(ctx, field)
+				return ec.fieldContext_UpdateUserRespData_role(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_UpdateUserRespData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_UpdateUserRespData_updatedAt(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type BaseUser", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type UpdateUserRespData", field.Name)
 		},
 	}
 	defer func() {
@@ -902,7 +2403,7 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Mutation().DeleteUser(rctx, fc.Args["uuid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -911,9 +2412,9 @@ func (ec *executionContext) _Mutation_deleteUser(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(*DeleteUserRespData)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalODeleteUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐDeleteUserRespData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -923,7 +2424,21 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
+			switch field.Name {
+			case "uuid":
+				return ec.fieldContext_DeleteUserRespData_uuid(ctx, field)
+			case "username":
+				return ec.fieldContext_DeleteUserRespData_username(ctx, field)
+			case "role":
+				return ec.fieldContext_DeleteUserRespData_role(ctx, field)
+			case "email":
+				return ec.fieldContext_DeleteUserRespData_email(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_DeleteUserRespData_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_DeleteUserRespData_updatedAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type DeleteUserRespData", field.Name)
 		},
 	}
 	defer func() {
@@ -940,8 +2455,8 @@ func (ec *executionContext) fieldContext_Mutation_deleteUser(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getUserByID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUserByID(ctx, field)
+func (ec *executionContext) _Query_getUserByUUID(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUserByUUID(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -954,7 +2469,7 @@ func (ec *executionContext) _Query_getUserByID(ctx context.Context, field graphq
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUserByID(rctx, fc.Args["id"].(string))
+		return ec.resolvers.Query().GetUserByUUID(rctx, fc.Args["uuid"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -963,12 +2478,12 @@ func (ec *executionContext) _Query_getUserByID(ctx context.Context, field graphq
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*BaseUser)
+	res := resTmp.(*GetUserByUUIDResp)
 	fc.Result = res
-	return ec.marshalOBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx, field.Selections, res)
+	return ec.marshalOGetUserByUUIDResp2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserByUUIDResp(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUserByID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getUserByUUID(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -977,13 +2492,19 @@ func (ec *executionContext) fieldContext_Query_getUserByID(ctx context.Context, 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "uuid":
-				return ec.fieldContext_BaseUser_uuid(ctx, field)
+				return ec.fieldContext_GetUserByUUIDResp_uuid(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GetUserByUUIDResp_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GetUserByUUIDResp_updatedAt(ctx, field)
 			case "username":
-				return ec.fieldContext_BaseUser_username(ctx, field)
+				return ec.fieldContext_GetUserByUUIDResp_username(ctx, field)
 			case "role":
-				return ec.fieldContext_BaseUser_role(ctx, field)
+				return ec.fieldContext_GetUserByUUIDResp_role(ctx, field)
+			case "email":
+				return ec.fieldContext_GetUserByUUIDResp_email(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type BaseUser", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GetUserByUUIDResp", field.Name)
 		},
 	}
 	defer func() {
@@ -993,15 +2514,15 @@ func (ec *executionContext) fieldContext_Query_getUserByID(ctx context.Context, 
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUserByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getUserByUUID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_getUsers(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_getUsers(ctx, field)
+func (ec *executionContext) _Query_getUserMe(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUserMe(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1014,7 +2535,7 @@ func (ec *executionContext) _Query_getUsers(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().GetUsers(rctx, fc.Args["page"].(int), fc.Args["page_size"].(int))
+		return ec.resolvers.Query().GetUserMe(rctx)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1023,12 +2544,12 @@ func (ec *executionContext) _Query_getUsers(ctx context.Context, field graphql.C
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*UserPage)
+	res := resTmp.(*GetUserByUUIDResp)
 	fc.Result = res
-	return ec.marshalOUserPage2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐUserPage(ctx, field.Selections, res)
+	return ec.marshalOGetUserByUUIDResp2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserByUUIDResp(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_getUserMe(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -1036,16 +2557,71 @@ func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, fie
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "users":
-				return ec.fieldContext_UserPage_users(ctx, field)
-			case "total_count":
-				return ec.fieldContext_UserPage_total_count(ctx, field)
-			case "page":
-				return ec.fieldContext_UserPage_page(ctx, field)
-			case "page_size":
-				return ec.fieldContext_UserPage_page_size(ctx, field)
+			case "uuid":
+				return ec.fieldContext_GetUserByUUIDResp_uuid(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_GetUserByUUIDResp_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_GetUserByUUIDResp_updatedAt(ctx, field)
+			case "username":
+				return ec.fieldContext_GetUserByUUIDResp_username(ctx, field)
+			case "role":
+				return ec.fieldContext_GetUserByUUIDResp_role(ctx, field)
+			case "email":
+				return ec.fieldContext_GetUserByUUIDResp_email(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type UserPage", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type GetUserByUUIDResp", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getUserList(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getUserList(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetUserList(rctx, fc.Args["input"].(*GetUserListReq))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*GetUserListRespData)
+	fc.Result = res
+	return ec.marshalOGetUserListRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespData(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getUserList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "total":
+				return ec.fieldContext_GetUserListRespData_total(ctx, field)
+			case "currentPage":
+				return ec.fieldContext_GetUserListRespData_currentPage(ctx, field)
+			case "totalPage":
+				return ec.fieldContext_GetUserListRespData_totalPage(ctx, field)
+			case "data":
+				return ec.fieldContext_GetUserListRespData_data(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type GetUserListRespData", field.Name)
 		},
 	}
 	defer func() {
@@ -1055,7 +2631,7 @@ func (ec *executionContext) fieldContext_Query_getUsers(ctx context.Context, fie
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_getUsers_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_getUserList_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1191,8 +2767,8 @@ func (ec *executionContext) fieldContext_Query___schema(_ context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _UserPage_users(ctx context.Context, field graphql.CollectedField, obj *UserPage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserPage_users(ctx, field)
+func (ec *executionContext) _UpdateUserRespData_uuid(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_uuid(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1205,7 +2781,7 @@ func (ec *executionContext) _UserPage_users(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Users, nil
+		return obj.UUID, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1217,34 +2793,26 @@ func (ec *executionContext) _UserPage_users(ctx context.Context, field graphql.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*BaseUser)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNBaseUser2ᚕᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUserᚄ(ctx, field.Selections, res)
+	return ec.marshalNID2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserPage_users(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateUserRespData_uuid(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserPage",
+		Object:     "UpdateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "uuid":
-				return ec.fieldContext_BaseUser_uuid(ctx, field)
-			case "username":
-				return ec.fieldContext_BaseUser_username(ctx, field)
-			case "role":
-				return ec.fieldContext_BaseUser_role(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type BaseUser", field.Name)
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserPage_total_count(ctx context.Context, field graphql.CollectedField, obj *UserPage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserPage_total_count(ctx, field)
+func (ec *executionContext) _UpdateUserRespData_username(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_username(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1257,7 +2825,7 @@ func (ec *executionContext) _UserPage_total_count(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
+		return obj.Username, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1269,26 +2837,26 @@ func (ec *executionContext) _UserPage_total_count(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserPage_total_count(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateUserRespData_username(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserPage",
+		Object:     "UpdateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserPage_page(ctx context.Context, field graphql.CollectedField, obj *UserPage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserPage_page(ctx, field)
+func (ec *executionContext) _UpdateUserRespData_email(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1301,7 +2869,7 @@ func (ec *executionContext) _UserPage_page(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Page, nil
+		return obj.Email, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1313,26 +2881,26 @@ func (ec *executionContext) _UserPage_page(ctx context.Context, field graphql.Co
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserPage_page(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateUserRespData_email(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserPage",
+		Object:     "UpdateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _UserPage_page_size(ctx context.Context, field graphql.CollectedField, obj *UserPage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_UserPage_page_size(ctx, field)
+func (ec *executionContext) _UpdateUserRespData_role(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_role(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1345,7 +2913,7 @@ func (ec *executionContext) _UserPage_page_size(ctx context.Context, field graph
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.PageSize, nil
+		return obj.Role, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1357,19 +2925,107 @@ func (ec *executionContext) _UserPage_page_size(ctx context.Context, field graph
 		}
 		return graphql.Null
 	}
-	res := resTmp.(int)
+	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
+	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_UserPage_page_size(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_UpdateUserRespData_role(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "UserPage",
+		Object:     "UpdateUserRespData",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateUserRespData_createdAt(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateUserRespData_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _UpdateUserRespData_updatedAt(ctx context.Context, field graphql.CollectedField, obj *UpdateUserRespData) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_UpdateUserRespData_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (any, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_UpdateUserRespData_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "UpdateUserRespData",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3148,14 +4804,14 @@ func (ec *executionContext) fieldContext___Type_specifiedByURL(_ context.Context
 
 // region    **************************** input.gotpl *****************************
 
-func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, obj any) (CreateUserInput, error) {
-	var it CreateUserInput
+func (ec *executionContext) unmarshalInputCreateUserReq(ctx context.Context, obj any) (CreateUserReq, error) {
+	var it CreateUserReq
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"username", "role", "password"}
+	fieldsInOrder := [...]string{"username", "email", "password", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3169,13 +4825,13 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Username = data
-		case "role":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Role = data
+			it.Email = data
 		case "password":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -3183,20 +4839,105 @@ func (ec *executionContext) unmarshalInputCreateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Password = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
 		}
 	}
 
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, obj any) (UpdateUserInput, error) {
-	var it UpdateUserInput
+func (ec *executionContext) unmarshalInputGetUserListReq(ctx context.Context, obj any) (GetUserListReq, error) {
+	var it GetUserListReq
 	asMap := map[string]any{}
 	for k, v := range obj.(map[string]any) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"username", "role", "password"}
+	if _, present := asMap["queryBy"]; !present {
+		asMap["queryBy"] = "username"
+	}
+	if _, present := asMap["page"]; !present {
+		asMap["page"] = 1
+	}
+	if _, present := asMap["limit"]; !present {
+		asMap["limit"] = 10
+	}
+	if _, present := asMap["sortOrder"]; !present {
+		asMap["sortOrder"] = -1
+	}
+	if _, present := asMap["sortBy"]; !present {
+		asMap["sortBy"] = "updated_at"
+	}
+
+	fieldsInOrder := [...]string{"query", "queryBy", "page", "limit", "sortOrder", "sortBy"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "query":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("query"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Query = data
+		case "queryBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("queryBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.QueryBy = data
+		case "page":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Page = data
+		case "limit":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Limit = data
+		case "sortOrder":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortOrder"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SortOrder = data
+		case "sortBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SortBy = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdateUserReq(ctx context.Context, obj any) (UpdateUserReq, error) {
+	var it UpdateUserReq
+	asMap := map[string]any{}
+	for k, v := range obj.(map[string]any) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"username", "email", "password", "role"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -3210,13 +4951,13 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Username = data
-		case "role":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Role = data
+			it.Email = data
 		case "password":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("password"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -3224,6 +4965,13 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 				return it, err
 			}
 			it.Password = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
 		}
 	}
 
@@ -3238,29 +4986,290 @@ func (ec *executionContext) unmarshalInputUpdateUserInput(ctx context.Context, o
 
 // region    **************************** object.gotpl ****************************
 
-var baseUserImplementors = []string{"BaseUser"}
+var createUserRespDataImplementors = []string{"CreateUserRespData"}
 
-func (ec *executionContext) _BaseUser(ctx context.Context, sel ast.SelectionSet, obj *BaseUser) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, baseUserImplementors)
+func (ec *executionContext) _CreateUserRespData(ctx context.Context, sel ast.SelectionSet, obj *CreateUserRespData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, createUserRespDataImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("BaseUser")
+			out.Values[i] = graphql.MarshalString("CreateUserRespData")
 		case "uuid":
-			out.Values[i] = ec._BaseUser_uuid(ctx, field, obj)
+			out.Values[i] = ec._CreateUserRespData_uuid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "username":
-			out.Values[i] = ec._BaseUser_username(ctx, field, obj)
+			out.Values[i] = ec._CreateUserRespData_username(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "role":
-			out.Values[i] = ec._BaseUser_role(ctx, field, obj)
+			out.Values[i] = ec._CreateUserRespData_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._CreateUserRespData_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._CreateUserRespData_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._CreateUserRespData_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var deleteUserRespDataImplementors = []string{"DeleteUserRespData"}
+
+func (ec *executionContext) _DeleteUserRespData(ctx context.Context, sel ast.SelectionSet, obj *DeleteUserRespData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, deleteUserRespDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("DeleteUserRespData")
+		case "uuid":
+			out.Values[i] = ec._DeleteUserRespData_uuid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "username":
+			out.Values[i] = ec._DeleteUserRespData_username(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._DeleteUserRespData_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._DeleteUserRespData_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._DeleteUserRespData_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._DeleteUserRespData_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var getUserByUUIDRespImplementors = []string{"GetUserByUUIDResp"}
+
+func (ec *executionContext) _GetUserByUUIDResp(ctx context.Context, sel ast.SelectionSet, obj *GetUserByUUIDResp) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getUserByUUIDRespImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetUserByUUIDResp")
+		case "uuid":
+			out.Values[i] = ec._GetUserByUUIDResp_uuid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GetUserByUUIDResp_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GetUserByUUIDResp_updatedAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "username":
+			out.Values[i] = ec._GetUserByUUIDResp_username(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._GetUserByUUIDResp_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._GetUserByUUIDResp_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var getUserListRespDataImplementors = []string{"GetUserListRespData"}
+
+func (ec *executionContext) _GetUserListRespData(ctx context.Context, sel ast.SelectionSet, obj *GetUserListRespData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getUserListRespDataImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetUserListRespData")
+		case "total":
+			out.Values[i] = ec._GetUserListRespData_total(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "currentPage":
+			out.Values[i] = ec._GetUserListRespData_currentPage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalPage":
+			out.Values[i] = ec._GetUserListRespData_totalPage(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "data":
+			out.Values[i] = ec._GetUserListRespData_data(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var getUserListRespData_UserImplementors = []string{"GetUserListRespData_User"}
+
+func (ec *executionContext) _GetUserListRespData_User(ctx context.Context, sel ast.SelectionSet, obj *GetUserListRespDataUser) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, getUserListRespData_UserImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("GetUserListRespData_User")
+		case "uuid":
+			out.Values[i] = ec._GetUserListRespData_User_uuid(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "username":
+			out.Values[i] = ec._GetUserListRespData_User_username(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "email":
+			out.Values[i] = ec._GetUserListRespData_User_email(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._GetUserListRespData_User_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._GetUserListRespData_User_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._GetUserListRespData_User_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3309,6 +5318,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createUser(ctx, field)
+			})
+		case "updateUserMe":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateUserMe(ctx, field)
 			})
 		case "updateUser":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -3360,7 +5373,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
-		case "getUserByID":
+		case "getUserByUUID":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3369,7 +5382,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUserByID(ctx, field)
+				res = ec._Query_getUserByUUID(ctx, field)
 				return res
 			}
 
@@ -3379,7 +5392,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "getUsers":
+		case "getUserMe":
 			field := field
 
 			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
@@ -3388,7 +5401,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_getUsers(ctx, field)
+				res = ec._Query_getUserMe(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getUserList":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getUserList(ctx, field)
 				return res
 			}
 
@@ -3429,34 +5461,44 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 	return out
 }
 
-var userPageImplementors = []string{"UserPage"}
+var updateUserRespDataImplementors = []string{"UpdateUserRespData"}
 
-func (ec *executionContext) _UserPage(ctx context.Context, sel ast.SelectionSet, obj *UserPage) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, userPageImplementors)
+func (ec *executionContext) _UpdateUserRespData(ctx context.Context, sel ast.SelectionSet, obj *UpdateUserRespData) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, updateUserRespDataImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("UserPage")
-		case "users":
-			out.Values[i] = ec._UserPage_users(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("UpdateUserRespData")
+		case "uuid":
+			out.Values[i] = ec._UpdateUserRespData_uuid(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "total_count":
-			out.Values[i] = ec._UserPage_total_count(ctx, field, obj)
+		case "username":
+			out.Values[i] = ec._UpdateUserRespData_username(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "page":
-			out.Values[i] = ec._UserPage_page(ctx, field, obj)
+		case "email":
+			out.Values[i] = ec._UpdateUserRespData_email(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "page_size":
-			out.Values[i] = ec._UserPage_page_size(ctx, field, obj)
+		case "role":
+			out.Values[i] = ec._UpdateUserRespData_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createdAt":
+			out.Values[i] = ec._UpdateUserRespData_createdAt(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatedAt":
+			out.Values[i] = ec._UpdateUserRespData_updatedAt(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -3809,7 +5851,27 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) marshalNBaseUser2ᚕᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*BaseUser) graphql.Marshaler {
+func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
+	res, err := graphql.UnmarshalBoolean(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
+	res := graphql.MarshalBoolean(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
+func (ec *executionContext) unmarshalNCreateUserReq2backendᚋinterfaceᚋgqlᚋuserᚐCreateUserReq(ctx context.Context, v any) (CreateUserReq, error) {
+	res, err := ec.unmarshalInputCreateUserReq(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGetUserListRespData_User2ᚕᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespDataUserᚄ(ctx context.Context, sel ast.SelectionSet, v []*GetUserListRespDataUser) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -3833,7 +5895,7 @@ func (ec *executionContext) marshalNBaseUser2ᚕᚖbackendᚋinterfaceᚋgqlᚋu
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx, sel, v[i])
+			ret[i] = ec.marshalNGetUserListRespData_User2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespDataUser(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -3853,34 +5915,14 @@ func (ec *executionContext) marshalNBaseUser2ᚕᚖbackendᚋinterfaceᚋgqlᚋu
 	return ret
 }
 
-func (ec *executionContext) marshalNBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx context.Context, sel ast.SelectionSet, v *BaseUser) graphql.Marshaler {
+func (ec *executionContext) marshalNGetUserListRespData_User2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespDataUser(ctx context.Context, sel ast.SelectionSet, v *GetUserListRespDataUser) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._BaseUser(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNBoolean2bool(ctx context.Context, v any) (bool, error) {
-	res, err := graphql.UnmarshalBoolean(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.SelectionSet, v bool) graphql.Marshaler {
-	res := graphql.MarshalBoolean(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNCreateUserInput2backendᚋinterfaceᚋgqlᚋuserᚐCreateUserInput(ctx context.Context, v any) (CreateUserInput, error) {
-	res, err := ec.unmarshalInputCreateUserInput(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
+	return ec._GetUserListRespData_User(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (string, error) {
@@ -3890,21 +5932,6 @@ func (ec *executionContext) unmarshalNID2string(ctx context.Context, v any) (str
 
 func (ec *executionContext) marshalNID2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
 	res := graphql.MarshalID(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v any) (int, error) {
-	res, err := graphql.UnmarshalInt(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
-	res := graphql.MarshalInt(v)
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -3928,8 +5955,8 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNUpdateUserInput2backendᚋinterfaceᚋgqlᚋuserᚐUpdateUserInput(ctx context.Context, v any) (UpdateUserInput, error) {
-	res, err := ec.unmarshalInputUpdateUserInput(ctx, v)
+func (ec *executionContext) unmarshalNUpdateUserReq2backendᚋinterfaceᚋgqlᚋuserᚐUpdateUserReq(ctx context.Context, v any) (UpdateUserReq, error) {
+	res, err := ec.unmarshalInputUpdateUserReq(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -4186,13 +6213,6 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) marshalOBaseUser2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐBaseUser(ctx context.Context, sel ast.SelectionSet, v *BaseUser) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._BaseUser(ctx, sel, v)
-}
-
 func (ec *executionContext) unmarshalOBoolean2bool(ctx context.Context, v any) (bool, error) {
 	res, err := graphql.UnmarshalBoolean(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -4219,6 +6239,58 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
+func (ec *executionContext) marshalOCreateUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐCreateUserRespData(ctx context.Context, sel ast.SelectionSet, v *CreateUserRespData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._CreateUserRespData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalODeleteUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐDeleteUserRespData(ctx context.Context, sel ast.SelectionSet, v *DeleteUserRespData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._DeleteUserRespData(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGetUserByUUIDResp2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserByUUIDResp(ctx context.Context, sel ast.SelectionSet, v *GetUserByUUIDResp) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GetUserByUUIDResp(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGetUserListReq2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListReq(ctx context.Context, v any) (*GetUserListReq, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGetUserListReq(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGetUserListRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐGetUserListRespData(ctx context.Context, sel ast.SelectionSet, v *GetUserListRespData) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._GetUserListRespData(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalInt(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalInt(*v)
+	return res
+}
+
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v any) (*string, error) {
 	if v == nil {
 		return nil, nil
@@ -4235,11 +6307,11 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	return res
 }
 
-func (ec *executionContext) marshalOUserPage2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐUserPage(ctx context.Context, sel ast.SelectionSet, v *UserPage) graphql.Marshaler {
+func (ec *executionContext) marshalOUpdateUserRespData2ᚖbackendᚋinterfaceᚋgqlᚋuserᚐUpdateUserRespData(ctx context.Context, sel ast.SelectionSet, v *UpdateUserRespData) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._UserPage(ctx, sel, v)
+	return ec._UpdateUserRespData(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

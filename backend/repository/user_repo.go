@@ -8,6 +8,7 @@ import (
 	"github.com/qiniu/qmgo"
 	"go.mongodb.org/mongo-driver/bson"
 
+	"backend/domain/dto"
 	"backend/domain/model"
 )
 
@@ -22,6 +23,9 @@ type IUserRepo interface {
 	GetByUsername(ctx context.Context, username string) (*model.UserModel, error)
 	Update(ctx context.Context, user *model.UserModel) error
 	Delete(ctx context.Context, uuid string) error
+	GetList(
+		ctx context.Context, params dto.UserRepo_GetListParams,
+	) ([]model.UserModel, *int64, error)
 }
 
 func NewUserRepo(userColl *qmgo.Collection) IUserRepo {
@@ -90,4 +94,116 @@ func (repo *UserRepo) Delete(ctx context.Context, uuid string) error {
 		return errors.New("failed to delete obj")
 	}
 	return nil
+}
+
+func (repo *UserRepo) GetList(
+	ctx context.Context, params dto.UserRepo_GetListParams,
+) ([]model.UserModel, *int64, error) {
+	// validate param
+	err := params.Validate()
+	if err != nil {
+		return nil, nil, err
+	}
+	var result []model.UserModel
+	var totalCount *int64
+
+	// filter
+	matchStage := bson.M{}
+	if params.Query != nil && params.QueryBy != nil {
+		matchStage[*params.QueryBy] = bson.M{
+			"$regex": *params.Query, "$options": "i",
+		}
+	}
+
+	// prepare pipelline
+	pipeline := []bson.M{}
+
+	// apply match stage to pipeline
+	if len(matchStage) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": matchStage})
+	}
+
+	paginatedResultsPipeline := []bson.M{}
+
+	// sort
+	if params.SortBy != nil && *params.SortBy != "" {
+		sortStage := bson.M{}
+		sortStage[*params.SortBy] = params.SortOrder
+		paginatedResultsPipeline = append(paginatedResultsPipeline, bson.M{"$sort": sortStage})
+	}
+
+	// pagination
+	if params.Page != nil && params.Limit != nil {
+		skip := (*params.Page - 1) * *params.Limit
+		paginatedResultsPipeline = append(paginatedResultsPipeline, bson.M{"$skip": skip}, bson.M{"$limit": *params.Limit})
+	}
+
+	// decide whether to count or not
+	if params.DoCount {
+		pipeline = append(pipeline, bson.M{
+			"$facet": bson.M{
+				"paginatedResults": paginatedResultsPipeline,
+				"totalCount": []bson.M{
+					{"$count": "total_count"},
+				},
+			},
+		})
+	} else {
+		pipeline = append(pipeline, bson.M{
+			"$facet": bson.M{
+				"paginatedResults": paginatedResultsPipeline,
+			},
+		})
+	}
+
+	// agggregate
+	var aggregateResult []bson.M
+	cursor := repo.userColl.Aggregate(ctx, pipeline)
+	if err := cursor.All(&aggregateResult); err != nil {
+		logger.Error("Error decoding aggregation result:", err)
+		return nil, nil, err
+	}
+
+	// parse result
+	if len(aggregateResult) > 0 {
+		data := aggregateResult[0]
+
+		// get paginated result
+		if paginatedResultsRaw, exists := data["paginatedResults"]; exists {
+			if paginatedResultsArray, ok := paginatedResultsRaw.([]interface{}); ok {
+				for _, item := range paginatedResultsArray {
+					m, err := bson.Marshal(item)
+					if err != nil {
+						logger.Error("Error marshalling user:", err)
+						return nil, nil, err
+					}
+					var user model.UserModel
+					if err := bson.Unmarshal(m, &user); err != nil {
+						logger.Error("Error unmarshalling user:", err)
+						return nil, nil, err
+					}
+					result = append(result, user)
+				}
+			}
+		}
+
+		// get total count
+		if params.DoCount {
+			if totalCountRaw, exists := data["totalCount"]; exists {
+				if totalCountArray, ok := totalCountRaw.([]interface{}); ok && len(totalCountArray) > 0 {
+					if countData, ok := totalCountArray[0].(bson.M); ok {
+						if total, exists := countData["total_count"]; exists {
+							totalCountVal, ok := total.(int32)
+							if ok {
+								totalCount = new(int64)
+								*totalCount = int64(totalCountVal)
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return result, totalCount, nil
 }

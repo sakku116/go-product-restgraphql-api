@@ -2,16 +2,63 @@
 
 package user_gql
 
-type BaseUser struct {
-	UUID     string `json:"uuid"`
+type CreateUserReq struct {
 	Username string `json:"username"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
 	Role     string `json:"role"`
 }
 
-type CreateUserInput struct {
-	Username string `json:"username"`
-	Role     string `json:"role"`
-	Password string `json:"password"`
+type CreateUserRespData struct {
+	UUID      string `json:"uuid"`
+	Username  string `json:"username"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Email     string `json:"email"`
+}
+
+type DeleteUserRespData struct {
+	UUID      string `json:"uuid"`
+	Username  string `json:"username"`
+	Role      string `json:"role"`
+	Email     string `json:"email"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+}
+
+type GetUserByUUIDResp struct {
+	UUID      string `json:"uuid"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Username  string `json:"username"`
+	Role      string `json:"role"`
+	Email     string `json:"email"`
+}
+
+type GetUserListReq struct {
+	Query     *string `json:"query,omitempty"`
+	QueryBy   *string `json:"queryBy,omitempty"`
+	Page      *int    `json:"page,omitempty"`
+	Limit     *int    `json:"limit,omitempty"`
+	SortOrder *int    `json:"sortOrder,omitempty"`
+	SortBy    *string `json:"sortBy,omitempty"`
+}
+
+type GetUserListRespData struct {
+	Total       string                     `json:"total"`
+	CurrentPage string                     `json:"currentPage"`
+	TotalPage   string                     `json:"totalPage"`
+	Data        []*GetUserListRespDataUser `json:"data"`
+}
+
+type GetUserListRespDataUser struct {
+	UUID      string `json:"uuid"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }
 
 type Mutation struct {
@@ -20,15 +67,18 @@ type Mutation struct {
 type Query struct {
 }
 
-type UpdateUserInput struct {
+type UpdateUserReq struct {
 	Username *string `json:"username,omitempty"`
-	Role     *string `json:"role,omitempty"`
+	Email    *string `json:"email,omitempty"`
 	Password *string `json:"password,omitempty"`
+	Role     *string `json:"role,omitempty"`
 }
 
-type UserPage struct {
-	Users      []*BaseUser `json:"users"`
-	TotalCount int         `json:"total_count"`
-	Page       int         `json:"page"`
-	PageSize   int         `json:"page_size"`
+type UpdateUserRespData struct {
+	UUID      string `json:"uuid"`
+	Username  string `json:"username"`
+	Email     string `json:"email"`
+	Role      string `json:"role"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
 }

@@ -1,37 +1,65 @@
-type BaseProduct {
-  id: ID!
+type Product {
+  uuid: ID!
+  userUUID: String!
   name: String!
-  price: Float!
-  stock: Int!
-  created_at: String!
+  price: String!
+  stock: String!
+  createdAt: String!
+  updatedAt: String!
 }
 
-input CreateProductInput {
-  name: String!
-  price: Float!
-  stock: Int!
+type GetProductByUUIDRespData {
+  data: Product!
 }
 
-input UpdateProductInput {
+type CreateProductRespData {
+  data: Product!
+}
+
+type UpdateProductRespData {
+  data: Product!
+}
+
+type DeleteProductRespData {
+  data: Product!
+}
+
+type GetProductListRespData {
+  data: [Product!]!
+  total: String!
+  currentPage: String!
+  totalPage: String!
+}
+
+input CreateProductReq {
+  name: String!
+  stock: String!
+  price: String!
+}
+
+input UpdateProductReq {
   name: String
-  price: Float
-  stock: Int
+  stock: String
+  price: String
 }
 
-type ProductPage {
-  products: [BaseProduct!]!
-  total_count: Int!
-  page: Int!
-  page_size: Int!
+input GetProductListReq {
+  userUUID: String
+  query: String
+  queryBy: String
+  page: Int
+  limit: Int
+  sortOrder: Int
+  sortBy: String
 }
 
 type Query {
-  getProductByID(id: ID!): BaseProduct
-  getProducts(page: Int!, page_size: Int!): ProductPage
+  getProductByUUID(uuid: String!): GetProductByUUIDRespData!
+  getProductList(params: GetProductListReq): GetProductListRespData!
 }
 
 type Mutation {
-  createProduct(input: CreateProductInput!): BaseProduct
-  updateProduct(id: ID!, input: UpdateProductInput!): BaseProduct
-  deleteProduct(id: ID!): Boolean
+  createProduct(payload: CreateProductReq!): CreateProductRespData!
+  updateProduct(uuid: String!, payload: UpdateProductReq!): UpdateProductRespData!
+  deleteProduct(uuid: String!): DeleteProductRespData!
 }
