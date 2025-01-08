@@ -32,7 +32,12 @@ This repository contains a backend API built with Go, supporting both RESTful an
    cd go-product-restgraphql-api
    ```
 
-2. **Run the application using Docker Compose**: Ensure you have Docker and Docker Compose installed, then run:
+2. **Setup Environment Variables**: Copy the example `.env.example` to `.env` file and update it with your configuration:
+    ```bash
+    cp .env.example .env
+    ```
+
+3. **Run the application using Docker Compose**: Ensure you have Docker and Docker Compose installed, then run:
 
     ```bash
     docker-compose up -d
