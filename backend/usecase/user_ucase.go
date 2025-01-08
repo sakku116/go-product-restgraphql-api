@@ -308,7 +308,8 @@ func (ucase *UserUcase) GetUserList(
 	}
 
 	resp := &dto.GetUserListRespData{}
-	resp.Set(*total, *params.Page, *params.Limit)
+	logger.Debugf("total: %d, page: %d, limit: %d", total, *params.Page, *params.Limit)
+	resp.Set(total, *params.Page, *params.Limit)
 	resp.Data = users
 
 	return resp, nil

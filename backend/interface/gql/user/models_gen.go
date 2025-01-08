@@ -39,9 +39,9 @@ type GetUserByUUIDResp struct {
 type GetUserListReq struct {
 	Query     *string `json:"query,omitempty"`
 	QueryBy   *string `json:"queryBy,omitempty"`
-	Page      *int    `json:"page,omitempty"`
-	Limit     *int    `json:"limit,omitempty"`
-	SortOrder *int    `json:"sortOrder,omitempty"`
+	Page      *string `json:"page,omitempty"`
+	Limit     *string `json:"limit,omitempty"`
+	SortOrder *string `json:"sortOrder,omitempty"`
 	SortBy    *string `json:"sortBy,omitempty"`
 }
 

@@ -633,9 +633,9 @@ type DeleteUserRespData {
 input GetUserListReq {
   query: String
   queryBy: String = "username"
-  page: Int = 1
-  limit: Int = 10
-  sortOrder: Int = -1
+  page: String = "1"
+  limit: String = "10"
+  sortOrder: String = "-1"
   sortBy: String = "updated_at"
 }
 
@@ -4863,13 +4863,13 @@ func (ec *executionContext) unmarshalInputGetUserListReq(ctx context.Context, ob
 		asMap["queryBy"] = "username"
 	}
 	if _, present := asMap["page"]; !present {
-		asMap["page"] = 1
+		asMap["page"] = "1"
 	}
 	if _, present := asMap["limit"]; !present {
-		asMap["limit"] = 10
+		asMap["limit"] = "10"
 	}
 	if _, present := asMap["sortOrder"]; !present {
-		asMap["sortOrder"] = -1
+		asMap["sortOrder"] = "-1"
 	}
 	if _, present := asMap["sortBy"]; !present {
 		asMap["sortBy"] = "updated_at"
@@ -4898,21 +4898,21 @@ func (ec *executionContext) unmarshalInputGetUserListReq(ctx context.Context, ob
 			it.QueryBy = data
 		case "page":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("page"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Page = data
 		case "limit":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("limit"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.Limit = data
 		case "sortOrder":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortOrder"))
-			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -6273,22 +6273,6 @@ func (ec *executionContext) marshalOGetUserListRespData2ᚖbackendᚋinterface�
 		return graphql.Null
 	}
 	return ec._GetUserListRespData(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v any) (*int, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalInt(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.SelectionSet, v *int) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	res := graphql.MarshalInt(*v)
-	return res
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v any) (*string, error) {

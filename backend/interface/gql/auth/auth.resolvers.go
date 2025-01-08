@@ -7,7 +7,6 @@ package auth_gql
 import (
 	"backend/domain/dto"
 	"context"
-	"errors"
 )
 
 // Register is the resolver for the register field.
@@ -43,7 +42,7 @@ func (r *mutationResolver) Login(ctx context.Context, input LoginInput) (*LoginR
 	// process
 	data, err := r.authUcase.Login(ctx, dto)
 	if err != nil {
-		return nil, errors.New(err.Error())
+		return nil, err
 	}
 
 	// convert resp

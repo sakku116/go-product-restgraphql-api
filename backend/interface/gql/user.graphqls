@@ -64,9 +64,9 @@ type DeleteUserRespData {
 input GetUserListReq {
   query: String
   queryBy: String = "username"
-  page: Int = 1
-  limit: Int = 10
-  sortOrder: Int = -1
+  page: String = "1"
+  limit: String = "10"
+  sortOrder: String = "-1"
   sortBy: String = "updated_at"
 }
 

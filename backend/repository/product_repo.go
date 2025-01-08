@@ -26,7 +26,7 @@ type IProductRepo interface {
 	Delete(ctx context.Context, uuid string) error
 	GetList(
 		ctx context.Context, params dto.ProductRepo_GetListParams,
-	) ([]model.ProductModel, *int64, error)
+	) ([]model.ProductModel, int64, error)
 }
 
 func NewProductRepo(productColl *qmgo.Collection) IProductRepo {
@@ -91,14 +91,14 @@ func (repo *ProductRepo) Delete(ctx context.Context, uuid string) error {
 
 func (repo *ProductRepo) GetList(
 	ctx context.Context, params dto.ProductRepo_GetListParams,
-) ([]model.ProductModel, *int64, error) {
+) ([]model.ProductModel, int64, error) {
 	// validate param
 	err := params.Validate()
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 	var result []model.ProductModel
-	var totalCount *int64
+	var totalCount int64
 
 	// filter
 	matchStage := bson.M{}
@@ -157,7 +157,7 @@ func (repo *ProductRepo) GetList(
 	cursor := repo.productColl.Aggregate(ctx, pipeline)
 	if err := cursor.All(&aggregateResult); err != nil {
 		logger.Error("Error decoding aggregation result:", err)
-		return nil, nil, err
+		return nil, 0, err
 	}
 
 	// parse result
@@ -166,17 +166,18 @@ func (repo *ProductRepo) GetList(
 
 		// get paginated result
 		if paginatedResultsRaw, exists := data["paginatedResults"]; exists {
-			if paginatedResultsArray, ok := paginatedResultsRaw.([]interface{}); ok {
+			if paginatedResultsArray, ok := paginatedResultsRaw.(bson.A); ok {
 				for _, item := range paginatedResultsArray {
+					logger.Debug("item")
 					m, err := bson.Marshal(item)
 					if err != nil {
 						logger.Error("Error marshalling product:", err)
-						return nil, nil, err
+						return nil, 0, err
 					}
 					var product model.ProductModel
 					if err := bson.Unmarshal(m, &product); err != nil {
 						logger.Error("Error unmarshalling product:", err)
-						return nil, nil, err
+						return nil, 0, err
 					}
 					result = append(result, product)
 				}
@@ -186,13 +187,12 @@ func (repo *ProductRepo) GetList(
 		// get total count
 		if params.DoCount {
 			if totalCountRaw, exists := data["totalCount"]; exists {
-				if totalCountArray, ok := totalCountRaw.([]interface{}); ok && len(totalCountArray) > 0 {
+				if totalCountArray, ok := totalCountRaw.(bson.A); ok && len(totalCountArray) > 0 {
 					if countData, ok := totalCountArray[0].(bson.M); ok {
 						if total, exists := countData["total_count"]; exists {
 							totalCountVal, ok := total.(int32)
 							if ok {
-								totalCount = new(int64)
-								*totalCount = int64(totalCountVal)
+								totalCount = int64(totalCountVal)
 							}
 						}
 					}

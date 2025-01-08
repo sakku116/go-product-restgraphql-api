@@ -25,7 +25,7 @@ type IUserRepo interface {
 	Delete(ctx context.Context, uuid string) error
 	GetList(
 		ctx context.Context, params dto.UserRepo_GetListParams,
-	) ([]model.UserModel, *int64, error)
+	) ([]model.UserModel, int64, error)
 }
 
 func NewUserRepo(userColl *qmgo.Collection) IUserRepo {
@@ -98,14 +98,14 @@ func (repo *UserRepo) Delete(ctx context.Context, uuid string) error {
 
 func (repo *UserRepo) GetList(
 	ctx context.Context, params dto.UserRepo_GetListParams,
-) ([]model.UserModel, *int64, error) {
+) ([]model.UserModel, int64, error) {
 	// validate param
 	err := params.Validate()
 	if err != nil {
-		return nil, nil, err
+		return nil, 0, err
 	}
 	var result []model.UserModel
-	var totalCount *int64
+	var totalCount int64
 
 	// filter
 	matchStage := bson.M{}
@@ -156,13 +156,17 @@ func (repo *UserRepo) GetList(
 		})
 	}
 
+	// logger.Debugf("pipeline: %v", helper.PrettyJson(pipeline))
+
 	// agggregate
 	var aggregateResult []bson.M
 	cursor := repo.userColl.Aggregate(ctx, pipeline)
 	if err := cursor.All(&aggregateResult); err != nil {
 		logger.Error("Error decoding aggregation result:", err)
-		return nil, nil, err
+		return nil, 0, err
 	}
+
+	// logger.Debugf("aggregateResult: %v", helper.PrettyJson(aggregateResult))
 
 	// parse result
 	if len(aggregateResult) > 0 {
@@ -170,17 +174,18 @@ func (repo *UserRepo) GetList(
 
 		// get paginated result
 		if paginatedResultsRaw, exists := data["paginatedResults"]; exists {
-			if paginatedResultsArray, ok := paginatedResultsRaw.([]interface{}); ok {
+			if paginatedResultsArray, ok := paginatedResultsRaw.(bson.A); ok {
 				for _, item := range paginatedResultsArray {
+					logger.Debug("item")
 					m, err := bson.Marshal(item)
 					if err != nil {
 						logger.Error("Error marshalling user:", err)
-						return nil, nil, err
+						return nil, 0, err
 					}
 					var user model.UserModel
 					if err := bson.Unmarshal(m, &user); err != nil {
 						logger.Error("Error unmarshalling user:", err)
-						return nil, nil, err
+						return nil, 0, err
 					}
 					result = append(result, user)
 				}
@@ -190,13 +195,12 @@ func (repo *UserRepo) GetList(
 		// get total count
 		if params.DoCount {
 			if totalCountRaw, exists := data["totalCount"]; exists {
-				if totalCountArray, ok := totalCountRaw.([]interface{}); ok && len(totalCountArray) > 0 {
+				if totalCountArray, ok := totalCountRaw.(bson.A); ok && len(totalCountArray) > 0 {
 					if countData, ok := totalCountArray[0].(bson.M); ok {
 						if total, exists := countData["total_count"]; exists {
 							totalCountVal, ok := total.(int32)
 							if ok {
-								totalCount = new(int64)
-								*totalCount = int64(totalCountVal)
+								totalCount = int64(totalCountVal)
 							}
 						}
 					}

@@ -216,7 +216,7 @@ func (ucase *ProductUcase) GetListProduct(
 	}
 
 	resp := &dto.GetProductListRespData{}
-	resp.Set(*total, *params.Page, *params.Limit)
+	resp.Set(total, *params.Page, *params.Limit)
 	resp.Data = products
 
 	return resp, nil

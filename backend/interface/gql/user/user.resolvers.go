@@ -148,7 +148,39 @@ func (r *queryResolver) GetUserMe(ctx context.Context) (*GetUserByUUIDResp, erro
 
 // GetUserList is the resolver for the getUserList field.
 func (r *queryResolver) GetUserList(ctx context.Context, input *GetUserListReq) (*GetUserListRespData, error) {
-	data, err := r.userUcase.GetUserList(ctx, dto.GetUserListReq(*input))
+	// convert payload
+	dto := dto.GetUserListReq{
+		Query:   input.Query,
+		QueryBy: input.QueryBy,
+		SortBy:  input.SortBy,
+	}
+	if input.Page != nil {
+		tmp, err := strconv.Atoi(*input.Page)
+		if err != nil {
+			return nil, err
+		}
+		dto.Page = &tmp
+	}
+	if input.Limit != nil {
+		tmp, err := strconv.Atoi(*input.Limit)
+		if err != nil {
+			return nil, err
+		}
+		dto.Limit = &tmp
+	}
+	if input.SortOrder != nil {
+		tmp, err := strconv.Atoi(*input.SortOrder)
+		if err != nil {
+			return nil, err
+		}
+		dto.SortOrder = &tmp
+	}
+
+	// process
+	data, err := r.userUcase.GetUserList(ctx, dto)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	var resp GetUserListRespData
