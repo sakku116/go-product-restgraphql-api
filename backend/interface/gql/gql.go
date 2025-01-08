@@ -74,6 +74,7 @@ func setupGraphQLHandler(
 	handler.AddTransport(transport.GET{})
 	handler.AddTransport(transport.POST{})
 	handler.SetQueryCache(lru.New[*ast.QueryDocument](1000))
+	handler.Use(extension.Introspection{})
 	handler.Use(extension.AutomaticPersistedQuery{
 		Cache: lru.New[string](100),
 	})
