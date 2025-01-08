@@ -6,6 +6,7 @@ package product_gql
 
 import (
 	"backend/domain/dto"
+	gql_utils "backend/utils/gql"
 	"context"
 	"fmt"
 	"strconv"
@@ -53,9 +54,9 @@ func (r *mutationResolver) CreateProduct(ctx context.Context, payload CreateProd
 // UpdateProduct is the resolver for the updateProduct field.
 func (r *mutationResolver) UpdateProduct(ctx context.Context, uuid string, payload UpdateProductReq) (*UpdateProductRespData, error) {
 	// get current user
-	currentUser, ok := ctx.Value("currentUser").(dto.CurrentUser)
-	if !ok {
-		return nil, fmt.Errorf("unauthorized")
+	currentUser, err := gql_utils.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// convert payload
@@ -72,9 +73,11 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, uuid string, paylo
 	}
 
 	// process
-	data, err := r.productUcase.UpdateProduct(ctx, currentUser, uuid, dto)
+	data, err := r.productUcase.UpdateProduct(ctx, *currentUser, uuid, dto)
+	if err != nil {
+		return nil, err
+	}
 
-	// convert resp
 	// convert resp
 	product := &Product{
 		UUID:      data.UUID,
@@ -90,13 +93,16 @@ func (r *mutationResolver) UpdateProduct(ctx context.Context, uuid string, paylo
 // DeleteProduct is the resolver for the deleteProduct field.
 func (r *mutationResolver) DeleteProduct(ctx context.Context, uuid string) (*DeleteProductRespData, error) {
 	// get current user
-	currentUser, ok := ctx.Value("currentUser").(dto.CurrentUser)
-	if !ok {
-		return nil, fmt.Errorf("unauthorized")
+	currentUser, err := gql_utils.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// process
-	data, err := r.productUcase.DeleteProduct(ctx, currentUser, uuid)
+	data, err := r.productUcase.DeleteProduct(ctx, *currentUser, uuid)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	product := &Product{
@@ -114,6 +120,9 @@ func (r *mutationResolver) DeleteProduct(ctx context.Context, uuid string) (*Del
 func (r *queryResolver) GetProductByUUID(ctx context.Context, uuid string) (*GetProductByUUIDRespData, error) {
 	// proccess
 	data, err := r.productUcase.GetByUUID(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	product := &Product{
@@ -142,6 +151,9 @@ func (r *queryResolver) GetProductList(ctx context.Context, params *GetProductLi
 
 	// process
 	data, err := r.productUcase.GetListProduct(ctx, dto)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	var products []*Product

@@ -122,6 +122,14 @@ func (ucase *ProductUcase) UpdateProduct(
 		return nil, err
 	}
 
+	// check ownership
+	if product.UserUUID != currentUser.UUID {
+		return nil, &error_utils.CustomErr{
+			HttpCode: 400,
+			Message:  "you don't have permission to update this product",
+		}
+	}
+
 	// update product obj
 	if payload.Name != nil {
 		// check if name already exists

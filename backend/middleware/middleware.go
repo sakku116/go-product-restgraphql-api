@@ -5,6 +5,7 @@ import (
 	"backend/domain/dto"
 	"backend/utils/http_response"
 	jwt_util "backend/utils/jwt"
+	"context"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -71,6 +72,13 @@ func AuthAdminOnlyMiddleware(respWriter http_response.IHttpResponseWriter) gin.H
 			return
 		}
 
+		c.Next()
+	}
+}
+
+func GinContextMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Request = c.Request.WithContext(context.WithValue(c.Request.Context(), "GinContext", c))
 		c.Next()
 	}
 }

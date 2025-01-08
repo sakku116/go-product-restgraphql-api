@@ -7,15 +7,24 @@ package user_gql
 import (
 	"backend/domain/dto"
 	"backend/domain/enum"
+	gql_utils "backend/utils/gql"
 	"context"
-	"fmt"
 	"strconv"
 )
 
 // CreateUser is the resolver for the createUser field.
 func (r *mutationResolver) CreateUser(ctx context.Context, input CreateUserReq) (*CreateUserRespData, error) {
+	// authorize admin
+	_, err := gql_utils.GetCurrentUserAdminOnly(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// process
 	data, err := r.userUcase.CreateUser(ctx, dto.CreateUserReq(input))
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &CreateUserRespData{
@@ -32,9 +41,9 @@ func (r *mutationResolver) CreateUser(ctx context.Context, input CreateUserReq) 
 // UpdateUserMe is the resolver for the updateUserMe field.
 func (r *mutationResolver) UpdateUserMe(ctx context.Context, input UpdateUserReq) (*UpdateUserRespData, error) {
 	// get current user
-	currentUser, ok := ctx.Value("currentUser").(dto.CurrentUser)
-	if !ok {
-		return nil, fmt.Errorf("unauthorized")
+	currentUser, err := gql_utils.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// convert payload
@@ -50,6 +59,9 @@ func (r *mutationResolver) UpdateUserMe(ctx context.Context, input UpdateUserReq
 
 	// process
 	data, err := r.userUcase.UpdateUser(ctx, currentUser.UUID, dto)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &UpdateUserRespData{
@@ -65,6 +77,12 @@ func (r *mutationResolver) UpdateUserMe(ctx context.Context, input UpdateUserReq
 
 // UpdateUser is the resolver for the updateUser field.
 func (r *mutationResolver) UpdateUser(ctx context.Context, uuid string, input UpdateUserReq) (*UpdateUserRespData, error) {
+	// authorize admin
+	_, err := gql_utils.GetCurrentUserAdminOnly(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	// convert payload
 	dto := dto.UpdateUserReq{
 		Username: input.Username,
@@ -78,6 +96,9 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, uuid string, input Up
 
 	// process
 	data, err := r.userUcase.UpdateUser(ctx, uuid, dto)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &UpdateUserRespData{
@@ -93,7 +114,16 @@ func (r *mutationResolver) UpdateUser(ctx context.Context, uuid string, input Up
 
 // DeleteUser is the resolver for the deleteUser field.
 func (r *mutationResolver) DeleteUser(ctx context.Context, uuid string) (*DeleteUserRespData, error) {
+	// authorize admin
+	_, err := gql_utils.GetCurrentUserAdminOnly(ctx)
+	if err != nil {
+		return nil, err
+	}
+
 	data, err := r.userUcase.DeleteUser(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &DeleteUserRespData{
@@ -110,6 +140,9 @@ func (r *mutationResolver) DeleteUser(ctx context.Context, uuid string) (*Delete
 // GetUserByUUID is the resolver for the getUserByUUID field.
 func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*GetUserByUUIDResp, error) {
 	data, err := r.userUcase.GetByUUID(ctx, uuid)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &GetUserByUUIDResp{
@@ -126,13 +159,16 @@ func (r *queryResolver) GetUserByUUID(ctx context.Context, uuid string) (*GetUse
 // GetUserMe is the resolver for the getUserMe field.
 func (r *queryResolver) GetUserMe(ctx context.Context) (*GetUserByUUIDResp, error) {
 	// get current user
-	currentUser, ok := ctx.Value("currentUser").(dto.CurrentUser)
-	if !ok {
-		return nil, fmt.Errorf("unauthorized")
+	currentUser, err := gql_utils.GetCurrentUser(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	// process
 	data, err := r.userUcase.GetByUUID(ctx, currentUser.UUID)
+	if err != nil {
+		return nil, err
+	}
 
 	// convert resp
 	user := &GetUserByUUIDResp{

@@ -5,6 +5,8 @@ import (
 	auth_gql "backend/interface/gql/auth"
 	product_gql "backend/interface/gql/product"
 	user_gql "backend/interface/gql/user"
+	"backend/middleware"
+	"backend/utils/http_response"
 
 	_ "backend/docs"
 
@@ -22,6 +24,8 @@ import (
 var logger = logging.MustGetLogger("gql")
 
 func SetupGql(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonDependency) {
+	responseWriter := http_response.NewHttpResponseWriter()
+
 	// auth
 	setupGraphQLHandler(
 		ginEngine,
@@ -46,6 +50,7 @@ func SetupGql(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonDepe
 			},
 		),
 		"GraphQL User Playground",
+		middleware.AuthMiddleware(responseWriter),
 	)
 
 	// product
@@ -59,6 +64,7 @@ func SetupGql(ginEngine *gin.Engine, commonDependencies interface_pkg.CommonDepe
 			},
 		),
 		"GraphQL Product Playground",
+		middleware.AuthMiddleware(responseWriter),
 	)
 }
 
@@ -68,6 +74,7 @@ func setupGraphQLHandler(
 	playgroundEndpoint string,
 	schema graphql.ExecutableSchema,
 	playgroundTitle string,
+	middlewares ...gin.HandlerFunc,
 ) {
 	handler := handler.New(schema)
 	handler.AddTransport(transport.Options{})
@@ -79,9 +86,23 @@ func setupGraphQLHandler(
 		Cache: lru.New[string](100),
 	})
 
-	ginEngine.POST(endpoint, func(c *gin.Context) {
-		handler.ServeHTTP(c.Writer, c.Request)
-	})
+	if len(middlewares) > 0 {
+		handlerWithMiddlewares := gin.HandlerFunc(func(c *gin.Context) {
+			for _, mw := range middlewares {
+				mw(c)
+				if c.Writer.Written() {
+					return
+				}
+			}
+			handler.ServeHTTP(c.Writer, c.Request)
+		})
+		ginEngine.POST(endpoint, middleware.GinContextMiddleware(), handlerWithMiddlewares)
+	} else {
+		ginEngine.POST(endpoint, middleware.GinContextMiddleware(), func(c *gin.Context) {
+			handler.ServeHTTP(c.Writer, c.Request)
+		})
+	}
+
 	ginEngine.GET(playgroundEndpoint, func(c *gin.Context) {
 		playground.Handler(playgroundTitle, endpoint).ServeHTTP(c.Writer, c.Request)
 	})

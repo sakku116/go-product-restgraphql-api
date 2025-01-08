@@ -1,9 +1,13 @@
 package helper
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 func ArrayContains(arr interface{}, item interface{}) bool {
@@ -30,4 +34,12 @@ func PrettyJson(data interface{}) string {
 
 func TimeNowUTC() time.Time {
 	return time.Now().UTC()
+}
+
+func GinContextFromContext(ctx context.Context) (*gin.Context, error) {
+	ginCtx, ok := ctx.Value("GinContext").(*gin.Context)
+	if !ok {
+		return nil, errors.New("unable to get Gin context from context")
+	}
+	return ginCtx, nil
 }
