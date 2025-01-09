@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  react_go_product_mongodb:
+  product_api_mongodb:
     image: mongo:8.0
-    container_name: react_go_product_mongodb
+    container_name: product_api_mongodb
     restart: unless-stopped
     ports:
       - "27017:27017"
@@ -23,16 +23,16 @@ services:
       - my_network
 
   # backend
-  react_go_product_backend:
+  product_api:
     build:
-      context: ./backend
-    container_name: react_go_product_backend
+      context: .
+    container_name: product_api
     ports:
       - "8001:8001"
     networks:
       - my_network
     env_file:
-      - ./backend/.env
+      - .env
     # depends_on:
     #   react_go_product_mongodb:
     #     condition: service_healthy
