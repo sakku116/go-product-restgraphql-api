@@ -3,6 +3,8 @@ package model
 import (
 	"errors"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ProductModel struct {
@@ -15,14 +17,25 @@ type ProductModel struct {
 	UpdatedAt time.Time `json:"updated_at" bson:"updated_at"`
 }
 
-func (u *ProductModel) GetMongoProps() MongoProps {
+func (u ProductModel) GetMongoProps() MongoProps {
+	trueTmp := true
+	falseTmp := false
 	return MongoProps{
-		CollName: "users",
-		Index: []MongoIndex{
+		CollName: "products",
+		Indexes: []MongoIndex{
 			{
-				Key:       "uuid",
-				Direction: -1,
-				Unique:    true,
+				Key: "-uuid",
+				Options: &options.IndexOptions{
+					Unique:     &trueTmp,
+					Background: &trueTmp,
+				},
+			},
+			{
+				Key: "-name",
+				Options: &options.IndexOptions{
+					Unique:     &falseTmp,
+					Background: &trueTmp,
+				},
 			},
 		},
 	}

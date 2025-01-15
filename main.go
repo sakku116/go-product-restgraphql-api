@@ -9,6 +9,7 @@ import (
 	"backend/repository"
 	ucase "backend/usecase"
 	"backend/utils/helper"
+	mongo_util "backend/utils/mongo"
 	seeder_util "backend/utils/seeder/user"
 	"context"
 	"fmt"
@@ -45,6 +46,7 @@ func main() {
 	// models
 	userModel := model.UserModel{}
 	refreshTokenModel := model.RefreshTokenModel{}
+	productModel := model.ProductModel{}
 
 	// repositories
 	userRepo := repository.NewUserRepo(
@@ -57,18 +59,38 @@ func main() {
 			refreshTokenModel.GetMongoProps().CollName,
 		),
 	)
+	productRepo := repository.NewProductRepo(
+		mongoDatabase.Collection(
+			productModel.GetMongoProps().CollName,
+		),
+	)
 
 	// usecases
 	authUcase := ucase.NewAuthUcase(userRepo, refreshTokenRepo)
 	userUcase := ucase.NewUserUcase(userRepo)
+	productUcase := ucase.NewProductUcase(productRepo)
 
 	dependencies := interface_pkg.CommonDependency{
-		AuthUcase: authUcase,
-		UserUcase: userUcase,
+		AuthUcase:    authUcase,
+		UserUcase:    userUcase,
+		ProductUcase: productUcase,
 	}
 
-	// seed data
-	seeder_util.SeedUser(userRepo)
+	// proccess args
+	args := os.Args
+	if len(args) > 1 {
+		switch args[1] {
+		case "--seed-users":
+			seeder_util.SeedUser(userRepo)
+		case "--ensure-indexes":
+			mongo_util.EnsureMongoIndexes(
+				mongoDatabase,
+				userModel,
+				refreshTokenModel,
+				productModel,
+			)
+		}
+	}
 
 	// rest + gql
 	ginEngine := gin.Default()

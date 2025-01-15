@@ -5,6 +5,8 @@ import (
 	validator_util "backend/utils/validator/user"
 	"errors"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type UserModel struct {
@@ -17,19 +19,32 @@ type UserModel struct {
 	UpdatedAt time.Time     `json:"updated_at" bson:"updated_at"`
 }
 
-func (u *UserModel) GetMongoProps() MongoProps {
+func (u UserModel) GetMongoProps() MongoProps {
+	trueTmp := true
+	falseTmp := false
 	return MongoProps{
 		CollName: "users",
-		Index: []MongoIndex{
+		Indexes: []MongoIndex{
 			{
-				Key:       "username",
-				Direction: -1,
-				Unique:    true,
+				Key: "-uuid",
+				Options: &options.IndexOptions{
+					Unique:     &trueTmp,
+					Background: &trueTmp,
+				},
 			},
 			{
-				Key:       "uuid",
-				Direction: -1,
-				Unique:    true,
+				Key: "-username",
+				Options: &options.IndexOptions{
+					Unique:     &trueTmp,
+					Background: &trueTmp,
+				},
+			},
+			{
+				Key: "-email",
+				Options: &options.IndexOptions{
+					Unique:     &falseTmp,
+					Background: &trueTmp,
+				},
 			},
 		},
 	}

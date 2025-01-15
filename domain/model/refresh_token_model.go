@@ -2,6 +2,8 @@ package model
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type RefreshTokenModel struct {
@@ -15,19 +17,32 @@ type RefreshTokenModel struct {
 	Invalid   bool       `json:"invalid" bson:"invalid"`
 }
 
-func (u *RefreshTokenModel) GetMongoProps() MongoProps {
+func (u RefreshTokenModel) GetMongoProps() MongoProps {
+	trueTmp := true
+	falseTmp := false
 	return MongoProps{
 		CollName: "refresh_tokens",
-		Index: []MongoIndex{
+		Indexes: []MongoIndex{
 			{
-				Key:       "uuid",
-				Direction: -1,
-				Unique:    true,
+				Key: "-uuid",
+				Options: &options.IndexOptions{
+					Unique:     &trueTmp,
+					Background: &trueTmp,
+				},
 			},
 			{
-				Key:       "token",
-				Direction: -1,
-				Unique:    true,
+				Key: "-token",
+				Options: &options.IndexOptions{
+					Unique:     &trueTmp,
+					Background: &trueTmp,
+				},
+			},
+			{
+				Key: "-user_uuid",
+				Options: &options.IndexOptions{
+					Unique:     &falseTmp,
+					Background: &trueTmp,
+				},
 			},
 		},
 	}

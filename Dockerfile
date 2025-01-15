@@ -7,4 +7,4 @@ RUN go build -o backend .
 FROM alpine:latest
 WORKDIR /root/
 COPY --from=builder /app/backend .
-CMD ["./backend", "--server=rest"]
+CMD ["./backend", "--ensure-indexes", "--seed-users"]
